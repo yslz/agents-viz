@@ -1,13 +1,25 @@
 import { Component, createSignal, For, onMount, onCleanup, createEffect, createMemo } from 'solid-js'
-import type { AgentNodeData } from './AgentNode'
+import type { Agent } from '../data/agents-generated'
 import { useOpencodeRealAPI } from '../hooks/useOpencodeRealAPI'
 
 export interface ChatDialogProps {
-  agent: AgentNodeData
+  agent: Agent
   onClose: () => void
   initialPosition?: { x: number; y: number }
   serverUrl?: string
   mockMode?: boolean
+  conversation?: {  // New prop for pre-loaded conversation
+    projectId: string
+    agentId: string
+    messages: Array<{
+      role: 'user' | 'assistant'
+      content: string
+      timestamp: Date
+      sessionId: string
+      messageId: string
+    }>
+  }
+  readOnly?: boolean  // New prop for read-only mode
 }
 
 export const ChatDialog: Component<ChatDialogProps> = (props) => {
@@ -27,6 +39,37 @@ export const ChatDialog: Component<ChatDialogProps> = (props) => {
     agentName: props.agent.name,  // Pass the display name
     baseUrl: props.serverUrl,  // Use server URL from props (no default)
   })
+  
+  // Store the initial conversation snapshot to prevent re-rendering
+  const [cachedMessages, setCachedMessages] = createSignal<Array<{
+    role: 'user' | 'assistant' | 'system'
+    content: string
+    timestamp: Date
+  }>>([])
+  
+  // Cache the conversation messages on first load
+  createEffect(() => {
+    if (props.conversation?.messages && props.conversation.messages.length > 0) {
+      const currentCached = cachedMessages()
+      // Only update if length changed (prevent infinite loop)
+      if (currentCached.length !== props.conversation.messages.length) {
+        setCachedMessages(props.conversation.messages.map(m => ({
+          role: m.role as 'user' | 'assistant' | 'system',
+          content: m.content,
+          timestamp: m.timestamp,
+        })))
+        console.log('[ChatDialog] Cached messages:', props.conversation.messages.length)
+      }
+    }
+  })
+  
+  // Use cached messages for read-only mode, live API for interactive mode
+  const displayMessages = () => {
+    if (props.readOnly && cachedMessages().length > 0) {
+      return cachedMessages()
+    }
+    return api.messages()
+  }
 
   // Initialize position from click location
   createEffect(() => {
@@ -50,7 +93,7 @@ export const ChatDialog: Component<ChatDialogProps> = (props) => {
 
   // Auto-scroll to bottom when new message arrives
   createEffect(() => {
-    if (messagesEndRef && api.messages().length > 0) {
+    if (messagesEndRef && displayMessages().length > 0) {
       setTimeout(() => {
         messagesEndRef?.scrollIntoView({ behavior: 'smooth' })
       }, 100)
@@ -114,9 +157,11 @@ export const ChatDialog: Component<ChatDialogProps> = (props) => {
 
     setMessage('')
 
-    // Send message via API
-    // The loading state is managed by the hook
-    await api.sendMessage(content, props.agent.id)
+    // Send message via API (only if not in read-only mode)
+    if (!props.readOnly) {
+      // The loading state is managed by the hook
+      await api.sendMessage(content, props.agent.id)
+    }
   }
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -208,12 +253,14 @@ export const ChatDialog: Component<ChatDialogProps> = (props) => {
 
         {/* Messages Area */}
         <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50 dark:bg-gray-900 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
-          {api.messages().length === 0 ? (
+          {displayMessages().length === 0 ? (
             <div class="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400">
               <div class="text-5xl mb-4 opacity-80">{props.agent.emoji}</div>
               <p class="text-sm text-center max-w-xs">{props.agent.description}</p>
-              <p class="text-xs mt-2 opacity-60">Start a conversation...</p>
-              {!api.connected() && (
+              <p class="text-xs mt-2 opacity-60">
+                {props.readOnly ? 'No conversation history' : 'Start a conversation...'}
+              </p>
+              {!api.connected() && !props.readOnly && (
                 <div class="mt-4 flex items-center gap-2 text-xs text-orange-600 dark:text-orange-400">
                   <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -224,7 +271,7 @@ export const ChatDialog: Component<ChatDialogProps> = (props) => {
               )}
             </div>
           ) : (
-            <For each={api.messages()}>
+            <For each={displayMessages()}>
               {(msg) => (
                 <div
                   class={`flex ${msg.role === 'user' ? 'justify-end' : msg.role === 'system' ? 'justify-center' : 'justify-start'}`}
@@ -270,32 +317,43 @@ export const ChatDialog: Component<ChatDialogProps> = (props) => {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input Area */}
-        <div class="border-t border-gray-200 dark:border-gray-700 p-3 bg-white dark:bg-gray-800">
-          <div class="flex gap-2">
-            <textarea
-              class="flex-1 px-3 py-2.5 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-500"
-              placeholder={`Message ${props.agent.name}...`}
-              rows={2}
-              value={message()}
-              onInput={(e) => setMessage(e.currentTarget.value)}
-              onKeyDown={handleKeyDown}
-              disabled={api.loading() || !api.connected()}
-            />
-            <button
-              class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
-              onClick={handleSend}
-              disabled={!message().trim() || api.loading() || !api.connected()}
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-              </svg>
-            </button>
+        {/* Input Area - Only show if not in read-only mode */}
+        {!props.readOnly && (
+          <div class="border-t border-gray-200 dark:border-gray-700 p-3 bg-white dark:bg-gray-800">
+            <div class="flex gap-2">
+              <textarea
+                class="flex-1 px-3 py-2.5 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-500"
+                placeholder={`Message ${props.agent.name}...`}
+                rows={2}
+                value={message()}
+                onInput={(e) => setMessage(e.currentTarget.value)}
+                onKeyDown={handleKeyDown}
+                disabled={api.loading() || !api.connected()}
+              />
+              <button
+                class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                onClick={handleSend}
+                disabled={!message().trim() || api.loading() || !api.connected()}
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+              </button>
+            </div>
+            {api.error() && (
+              <p class="text-xs text-red-600 dark:text-red-400 mt-2">{api.error()}</p>
+            )}
           </div>
-          {api.error() && (
-            <p class="text-xs text-red-600 dark:text-red-400 mt-2">{api.error()}</p>
-          )}
-        </div>
+        )}
+        
+        {/* Read-only indicator */}
+        {props.readOnly && (
+          <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-2 bg-gray-50 dark:bg-gray-750 text-center">
+            <p class="text-xs text-gray-500 dark:text-gray-400">
+              📖 Read-only mode - This conversation is from your opencode TUI session
+            </p>
+          </div>
+        )}
       </div>
     </div>
   )

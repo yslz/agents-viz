@@ -20,7 +20,7 @@ export function useOpencodeAPI(options: UseOpencodeAPIOptions = {}) {
   const [messages, setMessages] = createSignal<Message[]>([])
   
   let eventSource: EventSource | null = null
-  let reconnectTimeout: NodeJS.Timeout | null = null
+  let reconnectTimeout: ReturnType<typeof setTimeout> | null = null
   
   const baseUrl = options.baseUrl || 'http://localhost:3000'
   const mockMode = options.mockMode ?? false

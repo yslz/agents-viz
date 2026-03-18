@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "parse-agents": "node scripts/parse-agents.mjs"
+    "parse-agents": "node scripts/parse-agents.mjs",
+    "parse-sessions": "node scripts/parse-sessions.mjs"
   },
   "dependencies": {
     "solid-js": "^1.9.10",

@@ -1,68 +1,95 @@
-import { Component, createSignal, createEffect, onCleanup } from 'solid-js'
-import { AgentGrid } from './components/AgentGrid'
-import { DivisionLegend } from './components/DivisionLegend'
+import { Component, createSignal, createEffect, onCleanup, Show, For } from 'solid-js'
+import { ProjectCard } from './components/ProjectCard'
 import { SearchBar } from './components/SearchBar'
 import { ChatDialog } from './components/ChatDialog'
 import { ServerConfig } from './components/ServerConfig'
+import { AgentDirectory } from './components/AgentDirectory'
 import { agents as initialAgents, divisions as initialDivisions } from './data/agents'
+import { useProjectAgents } from './hooks/useProjectAgents'
+import type { ProjectAgent, ProjectWithActivity } from './data/session-types'
+import type { Agent } from './data/agents-generated'
 
 const App: Component = () => {
-  const [agents, setAgents] = createSignal(initialAgents)
-  const [selectedAgent, setSelectedAgent] = createSignal<typeof initialAgents[0] | null>(null)
-  const [clickPosition, setClickPosition] = createSignal<{ x: number, y: number } | undefined>(undefined)
+  const [selectedAgent, setSelectedAgent] = createSignal<{
+    agent: Agent
+    projectId: string
+    position: { x: number, y: number }
+  } | null>(null)
   const [searchQuery, setSearchQuery] = createSignal('')
-  const [selectedDivision, setSelectedDivision] = createSignal<string | null>(null)
   const [sidebarWidth, setSidebarWidth] = createSignal(240)
   const [isResizing, setIsResizing] = createSignal(false)
   const [serverUrl, setServerUrl] = createSignal('http://localhost:36059')
   const [showServerConfig, setShowServerConfig] = createSignal(false)
-
-  const filteredAgents = () => {
-    let result = agents()
+  const [selectedDivision, setSelectedDivision] = createSignal<string | null>(null)
+  
+  // Use the project agents hook
+  const projectAgents = useProjectAgents({
+    baseUrl: serverUrl(),
+    agents: initialAgents,
+    pollInterval: 5000,
+    enabled: true,
+  })
+  
+  // Filter projects by search query
+  const filteredProjects = () => {
+    const projects = projectAgents.getProjects()
     
-    if (searchQuery()) {
-      const query = searchQuery().toLowerCase()
-      result = result.filter(agent => 
-        agent.name.toLowerCase().includes(query) ||
-        agent.description.toLowerCase().includes(query)
-      )
+    if (!searchQuery()) {
+      return projects
     }
     
-    if (selectedDivision()) {
-      result = result.filter(agent => agent.division === selectedDivision())
+    const query = searchQuery().toLowerCase()
+    return projects.filter(project => 
+      project.name.toLowerCase().includes(query) ||
+      project.path.toLowerCase().includes(query)
+    )
+  }
+  
+  // Get agent by ID from static list
+  const getAgentById = (agentId: string): Agent | undefined => {
+    return initialAgents.find(a => a.id === agentId)
+  }
+  
+  const handleAgentClick = (agentId: string, event: MouseEvent, projectId: string) => {
+    const agent = getAgentById(agentId)
+    if (!agent) return
+    
+    const rect = (event.target as HTMLElement).getBoundingClientRect()
+    const position = {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
     }
     
-    return result
+    // Type cast to ensure compatibility
+    setSelectedAgent({
+      agent: agent as any,
+      projectId,
+      position,
+    })
   }
-
-  const handleAgentClick = (agent: typeof initialAgents[0], position: { x: number, y: number }) => {
-    setSelectedAgent(agent)
-    setClickPosition(position)
-  }
-
+  
   const handleCloseDialog = () => {
     setSelectedAgent(null)
-    setClickPosition(undefined)
   }
-
+  
   // Resize handler
   const startResize = (e: MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
     setIsResizing(true)
   }
-
+  
   const handleMouseMove = (e: MouseEvent) => {
     if (!isResizing()) return
     e.preventDefault()
     const newWidth = Math.max(180, Math.min(400, e.clientX))
     setSidebarWidth(newWidth)
   }
-
+  
   const handleMouseUp = () => {
     setIsResizing(false)
   }
-
+  
   // Global mouse event listeners for resize
   createEffect(() => {
     if (isResizing()) {
@@ -75,7 +102,7 @@ const App: Component = () => {
       })
     }
   })
-
+  
   return (
     <div class="w-full h-full flex flex-col bg-gray-50 dark:bg-gray-900">
       {/* Header */}
@@ -86,7 +113,7 @@ const App: Component = () => {
           </div>
           <h1 class="text-xl font-bold text-gray-900 dark:text-white">Agents Visualization</h1>
           <span class="text-sm text-gray-500 dark:text-gray-400 ml-2">
-            {filteredAgents().length} agents
+            {filteredProjects().length} projects
           </span>
         </div>
         <div class="flex items-center gap-4">
@@ -102,24 +129,37 @@ const App: Component = () => {
           <SearchBar 
             value={searchQuery()} 
             onChange={setSearchQuery}
-            placeholder="Search agents..."
+            placeholder="Search projects..."
           />
         </div>
       </header>
 
       {/* Main Content */}
       <div class="flex-1 flex overflow-hidden relative">
-        {/* Division Legend Sidebar */}
+        {/* Agent Directory Sidebar */}
         <aside 
           class="border-r border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-y-auto shrink-0 shadow-sm"
           style={{ width: `${sidebarWidth()}px` }}
         >
-          <DivisionLegend
+          <AgentDirectory
+            agents={initialAgents}
             divisions={initialDivisions}
-            agents={agents()}
-            selectedDivision={selectedDivision()}
-            onSelectDivision={setSelectedDivision}
+            onSelectAgent={(agentId) => {
+              console.log('Selected agent from directory:', agentId)
+              // Could implement search/filter by clicking agent
+            }}
           />
+          
+          <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700">
+            <div class="flex justify-between items-center text-xs text-gray-600 dark:text-gray-400">
+              <span>Projects:</span>
+              <span class="font-mono">{projectAgents.getProjects().length}</span>
+            </div>
+            <div class="flex justify-between items-center text-xs text-gray-600 dark:text-gray-400">
+              <span>Sessions:</span>
+              <span class="font-mono">{projectAgents.projects().length}</span>
+            </div>
+          </div>
         </aside>
 
         {/* Resize Handle */}
@@ -129,25 +169,80 @@ const App: Component = () => {
           style={{ width: isResizing() ? '4px' : '1px' }}
         />
 
-        {/* Agent Grid Canvas */}
-        <main class="flex-1 overflow-hidden relative min-w-0">
-          <AgentGrid
-            agents={filteredAgents()}
-            onAgentClick={handleAgentClick}
-          />
+        {/* Project Grid Canvas */}
+        <main class="flex-1 overflow-y-auto p-6 min-w-0">
+          <Show 
+            when={filteredProjects().length > 0}
+            fallback={
+              <div class="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400">
+                <div class="text-6xl mb-4 opacity-50">📭</div>
+                <h3 class="text-lg font-semibold mb-2">No projects yet</h3>
+                <p class="text-sm text-center max-w-md">
+                  Start a conversation in opencode TUI to see your projects here.
+                  Projects are automatically detected from your session history.
+                </p>
+                <div class="mt-6 flex items-center gap-2 text-xs text-orange-600 dark:text-orange-400">
+                  <Show when={projectAgents.loading()}>
+                    <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Loading projects...
+                  </Show>
+                </div>
+              </div>
+            }
+          >
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+              <For each={filteredProjects()}>
+                {(project) => {
+                  const agents = projectAgents.getProjectAgents(project.path)
+                  
+                  // Filter by division if selected
+                  const filteredAgents = selectedDivision()
+                    ? agents.filter(a => a.division === selectedDivision())
+                    : agents
+                  
+                  return (
+                    <ProjectCard
+                      projectPath={project.path}
+                      projectName={project.name}
+                      agents={filteredAgents}
+                      sessionCount={project.sessionCount}
+                      lastUpdated={project.lastUpdated}
+                      onAgentClick={(agentId, event) => handleAgentClick(agentId, event, project.path)}
+                    />
+                  )
+                }}
+              </For>
+            </div>
+          </Show>
         </main>
       </div>
 
       {/* Chat Dialog */}
-      {selectedAgent() && (
-        <ChatDialog
-          agent={selectedAgent()!}
-          onClose={handleCloseDialog}
-          initialPosition={clickPosition()}
-          serverUrl={serverUrl()}
-          mockMode={false}  // Use real opencode server
-        />
-      )}
+      {selectedAgent() && (() => {
+        const selected = selectedAgent()!
+        const conversation = projectAgents.getConversation(selected.projectId, selected.agent.id)
+        
+        // Debug log
+        console.log('[App] Opening dialog for agent:', selected.agent.id, 
+                    'project:', selected.projectId,
+                    'conversation messages:', conversation?.messages?.length || 0,
+                    'conversation:', conversation)
+        
+        return (
+          <ChatDialog
+            agent={selected.agent}
+            onClose={handleCloseDialog}
+            initialPosition={selected.position}
+            serverUrl={serverUrl()}
+            mockMode={false}
+            conversation={conversation || undefined}
+            readOnly={true}  // Always in read-only mode for project conversations
+          />
+        )
+      })()}
 
       {/* Server Config Dialog */}
       {showServerConfig() && (
