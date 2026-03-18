@@ -110,7 +110,7 @@ export const AgentDirectory: Component<AgentDirectoryProps> = (props) => {
                 
                 {/* Agents List */}
                 {expanded() && (
-                  <div class="ml-5 mt-1 space-y-0.5">
+                  <div style="margin-left: 2rem" class="mt-1 space-y-0.5">
                     <Index each={divisionAgents}>
                       {(agent) => (
                         <button
