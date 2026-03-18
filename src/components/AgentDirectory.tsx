@@ -36,8 +36,7 @@ export const AgentDirectory: Component<AgentDirectoryProps> = (props) => {
     }
   })
   
-  // Track expanded divisions - use a simple string for state
-  const [expandedKey, setExpandedKey] = createSignal(Date.now().toString())
+  // Track expanded divisions
   const [expandedState, setExpandedState] = createSignal<Record<string, boolean>>({
     'Primary': true,
     'Commands': true,
@@ -45,16 +44,16 @@ export const AgentDirectory: Component<AgentDirectoryProps> = (props) => {
   
   const toggleDivision = (division: string) => {
     setExpandedState(prev => {
-      const newState = { ...prev, [division]: !prev[division] }
+      // Ensure division exists in state before toggling
+      const currentState = prev[division] ?? false;
+      const newState = { ...prev, [division]: !currentState };
       console.log('[AgentDirectory] Toggled', division, '->', newState[division])
-      // Force re-render by changing key
-      setExpandedKey(Date.now().toString())
-      return newState
-    })
+      return newState;
+    });
   }
   
   const isExpanded = (division: string) => {
-    return !!expandedState()[division]
+    return expandedState()[division] ?? false;
   }
   
   // Create division list once
@@ -76,12 +75,13 @@ export const AgentDirectory: Component<AgentDirectoryProps> = (props) => {
           {(item) => {
             const division = item().division
             const divisionAgents = item().agents
-            const expanded = isExpanded(division)
+            const expanded = () => expandedState()[division] ?? (division === 'Primary' || division === 'Commands')
             
             return (
               <div>
                 {/* Division Header */}
                 <button
+                  type="button"
                   class="w-full flex items-center justify-between px-2 py-1.5 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                   onClick={(e) => {
                     e.preventDefault()
@@ -92,7 +92,7 @@ export const AgentDirectory: Component<AgentDirectoryProps> = (props) => {
                 >
                   <div class="flex items-center gap-2">
                     <svg 
-                      class={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${expanded ? 'rotate-90' : ''}`}
+                      class={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${expanded() ? 'rotate-90' : ''}`}
                       fill="none" 
                       stroke="currentColor" 
                       viewBox="0 0 24 24"
@@ -109,7 +109,7 @@ export const AgentDirectory: Component<AgentDirectoryProps> = (props) => {
                 </button>
                 
                 {/* Agents List */}
-                {expanded && (
+                {expanded() && (
                   <div class="ml-5 mt-1 space-y-0.5">
                     <Index each={divisionAgents}>
                       {(agent) => (
