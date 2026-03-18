@@ -32,11 +32,11 @@ export const ProjectCard: Component<ProjectCardProps> = (props) => {
   // Build tree structure with parent-child relationships
   const activeAgentTree = createMemo(() => {
     const agents = activeAgents()
-    agents.forEach(a => console.log('[ProjectCard] Agent:', a.id, 'parentAgents:', a.parentAgents))
+    console.log('[ProjectCard] All active agents:', agents.map(a => ({ id: a.id, parentAgents: a.parentAgents })))
     
     const agentMap = new Map<string, AgentWithChildren>()
     
-    // First pass: create nodes for all agents
+    // First pass: create nodes
     agents.forEach(agent => {
       agentMap.set(agent.id, { ...agent, children: [] })
     })
@@ -48,20 +48,21 @@ export const ProjectCard: Component<ProjectCardProps> = (props) => {
     agents.forEach(agent => {
       const node = agentMap.get(agent.id)!
       const parentAgents = agent.parentAgents || []
+      console.log('[ProjectCard] Processing:', agent.id, 'parentAgents:', parentAgents)
       
       if (parentAgents.length > 0) {
         parentAgents.forEach(parentId => {
           const parentNode = agentMap.get(parentId)
-          if (parentNode) {
-            // Don't create circular references or self-references
-            if (parentNode.id !== node.id && !childIds.has(node.id)) {
-              parentNode.children.push(node)
-              childIds.add(node.id)
-            }
+          if (parentNode && parentNode.id !== node.id) {
+            parentNode.children.push(node)
+            childIds.add(node.id)
+            console.log('[ProjectCard] Linked:', parentId, '->', node.id)
           }
         })
       }
     })
+    
+    console.log('[ProjectCard] childIds:', Array.from(childIds))
     
     // Root agents are those not children of any other active agent
     agentMap.forEach((node, id) => {
@@ -70,6 +71,7 @@ export const ProjectCard: Component<ProjectCardProps> = (props) => {
       }
     })
     
+    console.log('[ProjectCard] Root agents:', rootAgents.map(a => a.id))
     return rootAgents
   })
 
@@ -130,7 +132,7 @@ export const ProjectCard: Component<ProjectCardProps> = (props) => {
               </p>
             </div>
           </div>
-          <div class="flex items-center gap-3" style="margin-right: 4px;">
+          <div class="flex items-center gap-3">
             <div class="text-right">
               <p class="text-xs text-gray-500 dark:text-gray-400">
                 {props.sessionCount} sessions
@@ -165,13 +167,13 @@ export const ProjectCard: Component<ProjectCardProps> = (props) => {
                 {(node) => (
                   <div 
                     class="relative flex items-center"
-                    style={{ 'margin-left': node.level > 0 ? `${node.level * 24}px` : '0' }}
+                    style={node.level > 0 ? `margin-left: ${node.level * 24}px` : ''}
                   >
                     {/* Connecting line for child agents */}
                     <Show when={node.hasLine}>
                       <div 
-                        class="absolute left-0 top-1/2 w-6 h-px bg-gray-300 dark:bg-gray-600 -translate-y-1/2"
-                        style={{ 'left': '-24px' }}
+                        class="absolute left-0 top-0 bottom-0 w-px bg-gray-300 dark:bg-gray-600"
+                        style={`left: -12px; width: 12px; height: 50%; border-left: 2px solid ${node.agent.color}40; border-bottom: 2px solid ${node.agent.color}40; border-bottom-left-radius: 4px;`}
                       ></div>
                     </Show>
                     <button
@@ -192,8 +194,8 @@ export const ProjectCard: Component<ProjectCardProps> = (props) => {
                       >
                         {node.agent.emoji}
                       </div>
-                      <div class="text-left min-w-0 flex-1">
-                        <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                      <div class="text-left min-w-0">
+                        <p class="text-sm font-semibold text-gray-900 dark:text-white">
                           {node.agent.name}
                         </p>
                         <p class="text-xs text-gray-500 dark:text-gray-400">
@@ -234,11 +236,11 @@ export const ProjectCard: Component<ProjectCardProps> = (props) => {
             </button>
             
             <Show when={isExpanded()}>
-              <div class="space-y-1"> {/* Changed from flex flex-wrap gap-2 to space-y-1 for consistency */}
+              <div class="flex flex-wrap gap-2 pl-6">
                 <For each={historicalAgents()}>
                   {(agent) => (
                     <button
-                      class="group flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-750 border border-gray-200 dark:border-gray-600 rounded-xl hover:shadow-md transition-all duration-200 cursor-pointer opacity-75 hover:opacity-100 w-full text-left"
+                      class="group flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-gray-750 border border-gray-200 dark:border-gray-600 rounded-xl hover:shadow-md transition-all duration-200 cursor-pointer opacity-75 hover:opacity-100"
                       onClick={(e) => handleAgentClick(agent.id, e)}
                     >
                       <div
@@ -250,8 +252,8 @@ export const ProjectCard: Component<ProjectCardProps> = (props) => {
                       >
                         {agent.emoji}
                       </div>
-                      <div class="text-left min-w-0 flex-1">
-                        <p class="text-xs font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap truncate">
+                      <div class="text-left">
+                        <p class="text-xs font-medium text-gray-700 dark:text-gray-300 whitespace-nowrap">
                           {agent.name}
                         </p>
                         <p class="text-[10px] text-gray-500 dark:text-gray-400">

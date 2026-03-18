@@ -128,4 +128,5 @@ export interface ProjectAgent {
   status: AgentStatus
   lastActive?: number
   messageCount?: number
+  parentAgents?: string[]  // Agents that called this agent
 }

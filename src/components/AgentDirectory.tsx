@@ -1,5 +1,6 @@
-import { Component, For, createSignal, createMemo, Index } from 'solid-js'
+import { Component, For, createSignal, createMemo, Index, Show } from 'solid-js'
 import type { Agent } from '../data/agents-generated'
+import { AgentInfoModal } from './AgentInfoModal'
 
 export interface AgentDirectoryProps {
   agents: Agent[]
@@ -10,6 +11,9 @@ export interface AgentDirectoryProps {
 }
 
 export const AgentDirectory: Component<AgentDirectoryProps> = (props) => {
+  // Modal state for showing agent info
+  const [selectedAgent, setSelectedAgent] = createSignal<Agent | null>(null)
+
   // Group agents by division
   const agentsByDivision = createMemo(() => {
     const grouped: Record<string, Agent[]> = {}
@@ -114,8 +118,10 @@ export const AgentDirectory: Component<AgentDirectoryProps> = (props) => {
                     <Index each={divisionAgents}>
                       {(agent) => (
                         <button
+                          type="button"
                           class="w-full flex items-center gap-2 px-2 py-1 rounded-lg text-xs text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                           onClick={() => props.onSelectAgent?.(agent().id)}
+                          onDblClick={() => setSelectedAgent(agent())}
                           title={agent().description}
                         >
                           <span class="text-sm">{agent().emoji}</span>
@@ -130,6 +136,11 @@ export const AgentDirectory: Component<AgentDirectoryProps> = (props) => {
           }}
         </Index>
       </div>
+
+      <AgentInfoModal 
+        agent={selectedAgent()} 
+        onClose={() => setSelectedAgent(null)} 
+      />
     </div>
   )
 }

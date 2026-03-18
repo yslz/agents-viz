@@ -14,7 +14,6 @@ export interface UseProjectAgentsOptions {
 const ACTIVE_THRESHOLD = 24 * 60 * 60 * 1000
 
 export function useProjectAgents(options: UseProjectAgentsOptions) {
-  console.log('[useProjectAgents] Hook initialized, baseUrl:', options.baseUrl)
   const sessions = useSessions({
     baseUrl: options.baseUrl,
     pollInterval: options.pollInterval,
@@ -232,51 +231,36 @@ export function useProjectAgents(options: UseProjectAgentsOptions) {
           // Find static agent definition
           const staticAgent = options.agents.find(a => a.id === agentId)
           
-          // Get agent info - use static data or create fallback
-          const name = staticAgent?.name || agentId
-          const description = staticAgent?.description || ''
-          const division = staticAgent?.division || 'Unknown'
-          const color = staticAgent?.color || '#6B7280'
-          const emoji = staticAgent?.emoji || '🤖'
-          
-          const isActive = (now - activity.lastActive) < ACTIVE_THRESHOLD
-          
-          projectAgentsList.push({
-            id: agentId,
-            name,
-            description,
-            division,
-            color,
-            emoji,
-            status: isActive ? 'active' : 'historical',
-            lastActive: activity.lastActive,
-            messageCount: activity.messageCount,
-            parentAgents: Array.from(activity.parentAgents),
-          })
-          
-
-        })
-        
-        // Deduplicate agents by ID - this handles cases where the same agent ID appears
-        // in both primary and subAgents (like 'explore' agent)
-        const uniqueAgents = new Set<string>()
-        const deduplicatedAgents: ProjectAgent[] = []
-        
-        projectAgentsList.forEach(agent => {
-          if (!uniqueAgents.has(agent.id)) {
-            uniqueAgents.add(agent.id)
-            deduplicatedAgents.push(agent)
+          if (staticAgent) {
+            const isActive = (now - activity.lastActive) < ACTIVE_THRESHOLD
+            
+            projectAgentsList.push({
+              id: agentId,
+              name: staticAgent.name,
+              description: staticAgent.description,
+              division: staticAgent.division,
+              color: staticAgent.color,
+              emoji: staticAgent.emoji,
+              status: isActive ? 'active' : 'historical',
+              lastActive: activity.lastActive,
+              messageCount: activity.messageCount,
+              parentAgents: Array.from(activity.parentAgents),
+            })
+            
+            if (activity.parentAgents.size > 0) {
+              console.log('[useProjectAgents] Agent', agentId, 'has parents:', Array.from(activity.parentAgents))
+            }
           }
         })
         
         // Sort: active first, then by lastActive
-        deduplicatedAgents.sort((a, b) => {
+        projectAgentsList.sort((a, b) => {
           if (a.status === 'active' && b.status !== 'active') return -1
           if (a.status !== 'active' && b.status === 'active') return 1
           return (b.lastActive || 0) - (a.lastActive || 0)
         })
         
-        projectAgentsMap.set(project.path, deduplicatedAgents)
+        projectAgentsMap.set(project.path, projectAgentsList)
       }
       
       // Only update state if conversations actually changed
