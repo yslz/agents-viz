@@ -1,0 +1,159 @@
+@import "tailwindcss";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+}
+
+/* ===== Main Scrollbar - Very Visible ===== */
+.overflow-auto {
+  scrollbar-width: 16px;
+  scrollbar-color: #9CA3AF rgba(0, 0, 0, 0.1);
+}
+
+.overflow-auto::-webkit-scrollbar {
+  width: 16px;
+  height: 16px;
+}
+
+.overflow-auto::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.overflow-auto::-webkit-scrollbar-thumb {
+  background: #9CA3AF;
+  border-radius: 8px;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  background-clip: padding-box;
+}
+
+.overflow-auto::-webkit-scrollbar-thumb:hover {
+  background: #6B7280;
+  border: 3px solid rgba(0, 0, 0, 0.1);
+  background-clip: padding-box;
+}
+
+/* Dark mode */
+.dark .overflow-auto::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark .overflow-auto::-webkit-scrollbar-thumb {
+  background: #6B7280;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  background-clip: padding-box;
+}
+
+.dark .overflow-auto::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+/* ===== Sidebar Scrollbar ===== */
+aside.overflow-y-auto {
+  scrollbar-width: 10px;
+  scrollbar-color: #D1D5DB rgba(0, 0, 0, 0.05);
+}
+
+aside.overflow-y-auto::-webkit-scrollbar {
+  width: 10px;
+}
+
+aside.overflow-y-auto::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+aside.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 5px;
+}
+
+aside.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+/* ===== Dialog Scrollbar ===== */
+.scrollbar-thin {
+  scrollbar-width: 8px;
+  scrollbar-color: #D1D5DB transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+/* ===== Utility Classes ===== */
+.select-none {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.cursor-grab {
+  cursor: grab;
+}
+
+.cursor-grabbing {
+  cursor: grabbing;
+}
+
+.cursor-col-resize {
+  cursor: col-resize;
+}
+
+/* ===== Animations ===== */
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-bounce {
+  animation: bounce 1.4s ease-in-out infinite;
+}
+
+/* ===== Agent Node ===== */
+.agent-node {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.agent-node:hover {
+  transform: scale(1.05);
+}
+
+/* ===== Dialog Overlay ===== */
+.fixed.inset-0.z-50 {
+  pointer-events: none;
+}
+
+.fixed.inset-0.z-50 > div {
+  pointer-events: auto;
+}

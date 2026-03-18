@@ -1,0 +1,24 @@
+{
+  "name": "agents-viz",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "parse-agents": "node scripts/parse-agents.mjs"
+  },
+  "dependencies": {
+    "solid-js": "^1.9.10",
+    "@kobalte/core": "^0.13.11"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0",
+    "vite-plugin-solid": "^2.11.0",
+    "tailwindcss": "^4.1.11",
+    "@tailwindcss/vite": "^4.1.11",
+    "typescript": "^5.8.2",
+    "@types/node": "^22.13.9"
+  }
+}
