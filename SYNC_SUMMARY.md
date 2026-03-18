@@ -6,30 +6,29 @@
 - ✅ 已创建 `.gitignore`（排除 node_modules 等）
 - ✅ 已初始化 git 仓库
 - ✅ 已创建初始提交
-- ✅ 已备份 156 个 opencode agents 配置
 
 ### 2. 项目文件
 ```
 agents-viz/
-├── src/                          # 源代码（已提交）
+├── src/                          # ✅ 同步 - 源代码
 │   ├── components/               # UI 组件
 │   ├── hooks/                    # React hooks
 │   ├── data/                     # 数据文件
 │   └── styles/                   # 样式文件
-├── opencode-agents-backup/       # Agents 配置备份（已提交）
-├── package.json                  # 依赖配置（已提交）
-├── vite.config.ts                # 构建配置（已提交）
-├── tsconfig.json                 # TypeScript 配置（已提交）
-├── .gitignore                    # Git 忽略规则（已提交）
-├── sync-to-github.sh             # 同步脚本（已创建）
-└── README_SYNC.md                # 同步指南（已创建）
+├── package.json                  # ✅ 同步 - 依赖配置
+├── vite.config.ts                # ✅ 同步 - 构建配置
+├── tsconfig.json                 # ✅ 同步 - TypeScript 配置
+├── .gitignore                    # ✅ 同步 - Git 忽略规则
+├── sync-to-github.sh             # ✅ 同步 - 同步脚本
+├── README.md                     # ✅ 同步 - 项目说明
+└── node_modules/                 # ❌ 不同步 - 每台电脑单独安装
 ```
 
 ### 3. 已提交的内容
 - ✅ 24 个源代码文件
-- ✅ 156 个 agents 配置备份
 - ✅ 所有配置文件
 - ✅ 文档文件
+- ✅ 同步脚本
 
 ---
 
@@ -68,33 +67,28 @@ agents-viz/
    cd agents-viz
    ```
 
-2. **恢复 opencode agents 配置**
-   ```bash
-   cp -r opencode-agents-backup/* ~/.opencode/agents/
-   ```
-
-3. **安装依赖**
+2. **安装依赖**
    ```bash
    npm install
    ```
 
-4. **启动 opencode web**
+3. **启动 opencode web**
    ```bash
    opencode web
    # 记下端口号，例如：http://localhost:36059
    ```
 
-5. **启动 agents-viz**
+4. **启动 agents-viz**
    ```bash
    npm run dev
    # 访问 http://localhost:5173
    ```
 
-6. **配置服务器地址**
+5. **配置服务器地址**
    - 打开浏览器访问 http://localhost:5173
    - 点击顶部 "Server" 按钮
    - 输入家里的 opencode 地址（如 `http://localhost:36059`）
-   - 点击 "Save"
+   - 保存
 
 ---
 
@@ -112,7 +106,6 @@ agents-viz/
    ```bash
    cd ~/code/agents-viz
    git pull
-   cp -r opencode-agents-backup/* ~/.opencode/agents/
    npm install
    npm run dev
    ```
@@ -141,11 +134,11 @@ agents-viz/
 - ❌ `node_modules/` - 每台电脑单独安装
 - ❌ `.env` 文件 - 可能包含敏感信息
 - ❌ opencode 运行时数据（sessions, cache）
+- ❌ opencode agents 配置 - 每台电脑有自己的配置
 
 ### 需要同步的内容
 - ✅ 源代码
 - ✅ 配置文件
-- ✅ agents 配置备份
 - ✅ 文档
 
 ### 端口可能不同
@@ -171,42 +164,24 @@ cd ~/code/agents-viz
 git pull
 ```
 
-### 备份 agents 配置
-```bash
-cp -r ~/.opencode/agents/* ~/code/agents-viz/opencode-agents-backup/
-```
-
-### 恢复 agents 配置
-```bash
-cp -r ~/code/agents-viz/opencode-agents-backup/* ~/.opencode/agents/
-```
-
----
-
-## 📞 遇到问题？
-
 ### 依赖安装失败
 ```bash
 rm -rf node_modules package-lock.json
 npm install
 ```
 
-### Git 冲突
-```bash
-# 查看冲突文件
-git status
+---
 
-# 手动解决冲突后
-git add <文件名>
-git commit -m "解决冲突"
-git push
+## 📊 Git 提交历史
+
+```bash
+cd ~/code/agents-viz
+git log --oneline
 ```
 
-### 端口不一致
-在 agents-viz 界面中：
-1. 点击顶部 "Server" 按钮
-2. 输入正确的 opencode 地址
-3. 保存
+当前提交：
+- Initial commit: 源代码和配置
+- Add sync scripts: 同步脚本和文档
 
 ---
 
