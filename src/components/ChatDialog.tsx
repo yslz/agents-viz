@@ -40,37 +40,18 @@ export const ChatDialog: Component<ChatDialogProps> = (props) => {
     baseUrl: props.serverUrl,  // Use server URL from props (no default)
   })
   
-  // Store the initial conversation snapshot to prevent re-rendering
-  const [cachedMessages, setCachedMessages] = createSignal<Array<{
-    role: 'user' | 'assistant' | 'system'
-    content: string
-    timestamp: Date
-  }>>([])
-  
-  // Cache the conversation messages on first load
-  createEffect(() => {
-    if (props.conversation?.messages && props.conversation.messages.length > 0) {
-      const currentCached = cachedMessages()
-      // Only update if length changed (prevent infinite loop)
-      if (currentCached.length !== props.conversation.messages.length) {
-        setCachedMessages(props.conversation.messages.map(m => ({
-          role: m.role as 'user' | 'assistant' | 'system',
-          content: m.content,
-          timestamp: m.timestamp,
-        })))
-        console.log('[ChatDialog] Cached messages:', props.conversation.messages.length)
-      }
-    }
-  })
-  
-  // Use cached messages for read-only mode, live API for interactive mode
+  // Use the conversation prop directly (parent manages the snapshot)
   const displayMessages = () => {
-    if (props.readOnly && cachedMessages().length > 0) {
-      return cachedMessages()
+    if (props.readOnly && props.conversation?.messages) {
+      return props.conversation.messages.map(m => ({
+        role: m.role as 'user' | 'assistant' | 'system',
+        content: m.content,
+        timestamp: m.timestamp,
+      }))
     }
     return api.messages()
   }
-
+  
   // Initialize position from click location
   createEffect(() => {
     if (props.initialPosition) {
@@ -90,12 +71,18 @@ export const ChatDialog: Component<ChatDialogProps> = (props) => {
       })
     }
   })
-
-  // Auto-scroll to bottom when new message arrives
+  
+  // Auto-scroll to bottom once on initial load (readonly mode)
+  let hasScrolledInitially = false
+  
   createEffect(() => {
-    if (messagesEndRef && displayMessages().length > 0) {
+    const messages = displayMessages()
+    
+    // Scroll to bottom once on initial load
+    if (!hasScrolledInitially && messages.length > 0 && messagesEndRef) {
+      hasScrolledInitially = true
       setTimeout(() => {
-        messagesEndRef?.scrollIntoView({ behavior: 'smooth' })
+        messagesEndRef?.scrollIntoView({ behavior: 'auto' })
       }, 100)
     }
   })
@@ -198,12 +185,12 @@ export const ChatDialog: Component<ChatDialogProps> = (props) => {
         {/* Header - Drag Handle */}
         <div
           ref={headerRef}
-          class="flex items-center justify-between px-4 py-3 cursor-grab active:cursor-grabbing select-none border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-750"
+          class="flex items-center justify-between px-5 py-4 cursor-grab active:cursor-grabbing select-none border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-750"
           onMouseDown={handleDragStart}
         >
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-3.5">
             <div
-              class="w-10 h-10 rounded-full flex items-center justify-center text-xl shrink-0"
+              class="w-11 h-11 rounded-full flex items-center justify-center text-xl shrink-0"
               style={{
                 'background-color': props.agent.color + '40',
                 'border': `3px solid ${props.agent.color}`,
@@ -216,31 +203,37 @@ export const ChatDialog: Component<ChatDialogProps> = (props) => {
               <div class="flex items-center gap-2">
                 <p class="text-xs text-gray-600 dark:text-gray-400 truncate">{props.agent.division}</p>
                 {api.connected() && (
-                  <span class="flex items-center gap-1 text-xs text-green-600 dark:text-green-400">
-                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                  <span class="flex items-center gap-1.5 text-xs text-green-600 dark:text-green-400">
+                    <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
                     {props.mockMode ? 'Mock' : 'Connected'}
                   </span>
                 )}
               </div>
             </div>
           </div>
-          <div class="flex items-center gap-2 shrink-0">
+          <div class="flex items-center gap-1.5 shrink-0">
             <button
-              class="p-1.5 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
+              class="p-2 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-lg transition-colors"
               onClick={() => setIsMaximized(!isMaximized())}
               title={isMaximized() ? 'Restore' : 'Maximize'}
               onMouseDown={(e) => e.stopPropagation()}
             >
               <svg class="w-5 h-5 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {isMaximized() ? (
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2v-2M16 4h2a2 2 0 012 2v2M16 20h2a2 2 0 002-2v-2" />
+                  <>
+                    <rect x="5" y="9" width="10" height="10" rx="1" stroke-width="1.5" />
+                    <path d="M15 9V5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4" stroke-width="1.5" />
+                  </>
                 ) : (
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4a2 2 0 012-2h4M20 8v8a2 2 0 01-2 2H8M4 16v4a2 2 0 002 2h4M16 4h4a2 2 0 012 2v4" />
+                  <>
+                    <rect x="4" y="4" width="10" height="10" rx="1" stroke-width="1.5" />
+                    <rect x="10" y="10" width="10" height="10" rx="1" stroke-width="1.5" />
+                  </>
                 )}
               </svg>
             </button>
             <button
-              class="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
+              class="p-2 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-lg transition-colors"
               onClick={props.onClose}
               onMouseDown={(e) => e.stopPropagation()}
             >
@@ -252,16 +245,16 @@ export const ChatDialog: Component<ChatDialogProps> = (props) => {
         </div>
 
         {/* Messages Area */}
-        <div class="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50 dark:bg-gray-900 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent">
+        <div class="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent" style={{ 'padding': '20px 32px' }}>
           {displayMessages().length === 0 ? (
             <div class="flex flex-col items-center justify-center h-full text-gray-500 dark:text-gray-400">
-              <div class="text-5xl mb-4 opacity-80">{props.agent.emoji}</div>
-              <p class="text-sm text-center max-w-xs">{props.agent.description}</p>
-              <p class="text-xs mt-2 opacity-60">
+              <div class="text-6xl mb-5 opacity-80">{props.agent.emoji}</div>
+              <p class="text-sm text-center max-w-xs leading-relaxed">{props.agent.description}</p>
+              <p class="text-xs mt-3 opacity-60">
                 {props.readOnly ? 'No conversation history' : 'Start a conversation...'}
               </p>
               {!api.connected() && !props.readOnly && (
-                <div class="mt-4 flex items-center gap-2 text-xs text-orange-600 dark:text-orange-400">
+                <div class="mt-5 flex items-center gap-2 text-xs text-orange-600 dark:text-orange-400">
                   <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -271,45 +264,48 @@ export const ChatDialog: Component<ChatDialogProps> = (props) => {
               )}
             </div>
           ) : (
-            <For each={displayMessages()}>
-              {(msg) => (
-                <div
-                  class={`flex ${msg.role === 'user' ? 'justify-end' : msg.role === 'system' ? 'justify-center' : 'justify-start'}`}
-                >
-                  {msg.role === 'system' ? (
-                    <div class="max-w-[90%] rounded-lg px-4 py-2 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-sm">
-                      {msg.content}
-                    </div>
-                  ) : (
-                    <div
-                      class={`max-w-[80%] rounded-2xl px-4 py-2.5 shadow-sm ${
-                        msg.role === 'user'
-                          ? 'bg-blue-600 text-white'
-                          : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700'
-                      }`}
-                    >
-                      <div 
-                        class="text-sm prose dark:prose-invert prose-sm max-w-none"
-                        innerHTML={formatContent(msg.content)}
-                      />
-                      <p class={`text-xs mt-1 ${
-                        msg.role === 'user' ? 'text-blue-200' : 'text-gray-500 dark:text-gray-400'
-                      }`}>
-                        {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </For>
+            <div style={{ 'display': 'flex', 'flex-direction': 'column', 'gap': '16px' }}>
+              <For each={displayMessages()}>
+                {(msg) => (
+                  <div
+                    class={`flex ${msg.role === 'user' ? 'justify-end' : msg.role === 'system' ? 'justify-center' : 'justify-start'}`}
+                  >
+                    {msg.role === 'system' ? (
+                      <div class="max-w-[85%] rounded-xl px-5 py-3 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 text-sm">
+                        {msg.content}
+                      </div>
+                    ) : (
+                      <div
+                        class={`min-w-[120px] rounded-xl shadow-sm ${
+                          msg.role === 'user'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700'
+                        }`}
+                        style={{ 'max-width': '75%', 'padding': '12px 16px' }}
+                      >
+                        <div 
+                          class="text-sm leading-relaxed prose dark:prose-invert prose-sm max-w-none"
+                          innerHTML={formatContent(msg.content)}
+                        />
+                        <p class={`text-xs mt-2 ${
+                          msg.role === 'user' ? 'text-blue-200' : 'text-gray-500 dark:text-gray-400'
+                        }`}>
+                          {msg.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </For>
+            </div>
           )}
           {api.loading() && (
-            <div class="flex justify-start">
-              <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-3 shadow-sm">
-                <div class="flex gap-1.5">
-                  <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ 'animation-delay': '0ms' }} />
-                  <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ 'animation-delay': '150ms' }} />
-                  <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ 'animation-delay': '300ms' }} />
+            <div class="flex justify-start mt-5">
+              <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm" style={{ 'padding': '14px 18px' }}>
+                <div class="flex gap-2 justify-center">
+                  <div class="w-2.5 h-2.5 bg-gray-400 rounded-full animate-bounce" style={{ 'animation-delay': '0ms' }} />
+                  <div class="w-2.5 h-2.5 bg-gray-400 rounded-full animate-bounce" style={{ 'animation-delay': '150ms' }} />
+                  <div class="w-2.5 h-2.5 bg-gray-400 rounded-full animate-bounce" style={{ 'animation-delay': '300ms' }} />
                 </div>
               </div>
             </div>
@@ -319,10 +315,10 @@ export const ChatDialog: Component<ChatDialogProps> = (props) => {
 
         {/* Input Area - Only show if not in read-only mode */}
         {!props.readOnly && (
-          <div class="border-t border-gray-200 dark:border-gray-700 p-3 bg-white dark:bg-gray-800">
-            <div class="flex gap-2">
+          <div class="border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-800">
+            <div class="flex gap-2.5">
               <textarea
-                class="flex-1 px-3 py-2.5 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-500"
+                class="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl text-sm text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-500"
                 placeholder={`Message ${props.agent.name}...`}
                 rows={2}
                 value={message()}
@@ -331,7 +327,7 @@ export const ChatDialog: Component<ChatDialogProps> = (props) => {
                 disabled={api.loading() || !api.connected()}
               />
               <button
-                class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+                class="px-5 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
                 onClick={handleSend}
                 disabled={!message().trim() || api.loading() || !api.connected()}
               >
@@ -341,14 +337,14 @@ export const ChatDialog: Component<ChatDialogProps> = (props) => {
               </button>
             </div>
             {api.error() && (
-              <p class="text-xs text-red-600 dark:text-red-400 mt-2">{api.error()}</p>
+              <p class="text-xs text-red-600 dark:text-red-400 mt-2.5">{api.error()}</p>
             )}
           </div>
         )}
         
         {/* Read-only indicator */}
         {props.readOnly && (
-          <div class="border-t border-gray-200 dark:border-gray-700 px-4 py-2 bg-gray-50 dark:bg-gray-750 text-center">
+          <div class="border-t border-gray-200 dark:border-gray-700 px-5 py-2.5 bg-gray-50 dark:bg-gray-750 text-center">
             <p class="text-xs text-gray-500 dark:text-gray-400">
               📖 Read-only mode - This conversation is from your opencode TUI session
             </p>

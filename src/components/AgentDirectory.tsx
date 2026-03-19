@@ -14,6 +14,25 @@ export const AgentDirectory: Component<AgentDirectoryProps> = (props) => {
   // Modal state for showing agent info
   const [selectedAgent, setSelectedAgent] = createSignal<Agent | null>(null)
 
+  // Division display config with icons and descriptions
+  const divisionConfig: Record<string, { icon: string; tagline: string }> = {
+    'Primary': { icon: '⭐', tagline: 'Core agents' },
+    'Commands': { icon: '⚡', tagline: 'Quick commands' },
+    'Engineering': { icon: '💻', tagline: 'Building the future' },
+    'Design': { icon: '🎨', tagline: 'Beautiful, usable, delightful' },
+    'Paid Media': { icon: '💰', tagline: 'Turning spend into outcomes' },
+    'Sales': { icon: '💼', tagline: 'Pipeline into revenue' },
+    'Marketing': { icon: '📢', tagline: 'Growing your audience' },
+    'Product': { icon: '📊', tagline: 'Building the right thing' },
+    'Project Management': { icon: '🎬', tagline: 'Trains on time' },
+    'Testing': { icon: '🧪', tagline: 'Breaking things safely' },
+    'Support': { icon: '🛟', tagline: 'The backbone' },
+    'Spatial Computing': { icon: '🥽', tagline: 'The immersive future' },
+    'Specialized': { icon: '🎯', tagline: 'Unique specialists' },
+    'Game Development': { icon: '🎮', tagline: 'Building worlds' },
+    'Academic': { icon: '📚', tagline: 'Scholarly rigor' },
+  }
+  
   // Group agents by division
   const agentsByDivision = createMemo(() => {
     const grouped: Record<string, Agent[]> = {}
@@ -25,13 +44,32 @@ export const AgentDirectory: Component<AgentDirectoryProps> = (props) => {
       grouped[agent.division].push(agent)
     })
     
-    // Sort divisions alphabetically, but put Primary and Commands first
+    // Sort divisions by README order, Primary and Commands first
+    const divisionOrder = [
+      'Primary',
+      'Commands',
+      'Engineering',
+      'Design',
+      'Paid Media',
+      'Sales',
+      'Marketing',
+      'Product',
+      'Project Management',
+      'Testing',
+      'Support',
+      'Spatial Computing',
+      'Specialized',
+      'Game Development',
+      'Academic',
+    ]
+    
     const sortedDivisions = Object.keys(grouped).sort((a, b) => {
-      if (a === 'Primary') return -1
-      if (b === 'Primary') return 1
-      if (a === 'Commands') return -1
-      if (b === 'Commands') return 1
-      return a.localeCompare(b)
+      const aIndex = divisionOrder.indexOf(a)
+      const bIndex = divisionOrder.indexOf(b)
+      if (aIndex === -1 && bIndex === -1) return a.localeCompare(b)
+      if (aIndex === -1) return 1
+      if (bIndex === -1) return -1
+      return aIndex - bIndex
     })
     
     return {
@@ -70,9 +108,12 @@ export const AgentDirectory: Component<AgentDirectoryProps> = (props) => {
   })
   
   return (
-    <div class="p-4">
-      <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-3">
-        All Agents
+    <div class="py-4" style={{ 'padding-left': '5px', 'padding-right': '5px' }}>
+      <h3 class="text-sm font-bold text-gray-900 dark:text-white mb-3 flex items-center justify-between">
+        <span>All Agents</span>
+        <span class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded-full">
+          {props.agents.length}
+        </span>
       </h3>
       <div class="space-y-1">
         <Index each={divisionList()}>
@@ -81,36 +122,36 @@ export const AgentDirectory: Component<AgentDirectoryProps> = (props) => {
             const divisionAgents = item().agents
             const expanded = () => expandedState()[division] ?? (division === 'Primary' || division === 'Commands')
             
-            return (
-              <div>
-                {/* Division Header */}
-                <button
-                  type="button"
-                  class="w-full flex items-center justify-between px-2 py-1.5 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    console.log('[AgentDirectory] Click:', division)
-                    toggleDivision(division)
-                  }}
-                >
-                  <div class="flex items-center gap-2">
-                    <svg 
-                      class={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${expanded() ? 'rotate-90' : ''}`}
-                      fill="none" 
-                      stroke="currentColor" 
-                      viewBox="0 0 24 24"
-                    >
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                    </svg>
-                    <span class="text-gray-700 dark:text-gray-300 font-medium select-none">
-                      {division}
-                    </span>
-                  </div>
-                  <span class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded-full select-none">
-                    {divisionAgents.length}
-                  </span>
-                </button>
+return (
+    <div>
+      {/* Division Header */}
+      <button
+        type="button"
+        class="w-full flex items-center justify-between px-2 py-1.5 rounded-lg text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+        onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          console.log('[AgentDirectory] Click:', division)
+          toggleDivision(division)
+        }}
+      >
+        <div class="flex items-center gap-2">
+          <svg 
+            class={`w-3.5 h-3.5 text-gray-400 transition-transform duration-200 ${expanded() ? 'rotate-90' : ''}`}
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+          <span class="text-gray-700 dark:text-gray-300 font-medium select-none">
+            {divisionConfig[division]?.icon || ''} {division}
+          </span>
+        </div>
+        <span class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-1.5 py-0.5 rounded-full select-none">
+          {divisionAgents.length}
+        </span>
+      </button>
                 
                 {/* Agents List */}
                 {expanded() && (

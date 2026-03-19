@@ -4,7 +4,7 @@ import type { Project, ProjectWithActivity, ProjectAgent, ProjectConversation } 
 import type { Agent } from '../data/agents-generated'
 
 export interface UseProjectAgentsOptions {
-  baseUrl: string
+  baseUrl: () => string  // Changed to accessor function for reactivity
   agents: Agent[]  // Static agent list
   pollInterval?: number
   enabled?: boolean
@@ -14,7 +14,7 @@ export interface UseProjectAgentsOptions {
 const ACTIVE_THRESHOLD = 24 * 60 * 60 * 1000
 
 export function useProjectAgents(options: UseProjectAgentsOptions) {
-  console.log('[useProjectAgents] Hook initialized, baseUrl:', options.baseUrl)
+  console.log('[useProjectAgents] Hook initialized')
   const sessions = useSessions({
     baseUrl: options.baseUrl,
     pollInterval: options.pollInterval,
@@ -60,6 +60,20 @@ export function useProjectAgents(options: UseProjectAgentsOptions) {
   
   // Store previous conversations to prevent unnecessary updates
   let previousConversations = new Map<string, ProjectConversation>()
+  
+  // Helper: check if two conversation messages are equal
+  const messagesEqual = (
+    a: Array<{role: string; content: string; messageId: string}>,
+    b: Array<{role: string; content: string; messageId: string}>
+  ): boolean => {
+    if (a.length !== b.length) return false
+    for (let i = 0; i < a.length; i++) {
+      if (a[i].messageId !== b[i].messageId || a[i].content !== b[i].content) {
+        return false
+      }
+    }
+    return true
+  }
   
   // Fetch messages and extract agent activity
   const updateProjectAgents = async () => {
@@ -163,6 +177,15 @@ export function useProjectAgents(options: UseProjectAgentsOptions) {
               messageId: string
             }>>()
             
+            // Track sub-agent content from task calls
+            const subAgentMessages = new Map<string, Array<{
+              role: 'user' | 'assistant'
+              content: string
+              timestamp: Date
+              sessionId: string
+              messageId: string
+            }>>()
+            
             messages.forEach(message => {
               const agentId = sessions.extractAgentFromMessage(message)
               const content = sessions.extractTextFromMessage(message)
@@ -183,6 +206,74 @@ export function useProjectAgents(options: UseProjectAgentsOptions) {
               })
             })
             
+            // Extract sub-agent session IDs from task calls and fetch their messages
+            const subAgentSessionIds: Array<{subagentType: string, sessionId: string}> = []
+            messages.forEach(message => {
+              const parts = message.parts || []
+              parts.forEach(part => {
+                if (part.tool === 'task') {
+                  const state = part.state as any
+                  const input = state?.input || {}
+                  const subagentType = input?.subagent_type
+                  const subSessionId = state?.metadata?.sessionId
+                  if (subagentType && subSessionId) {
+                    subAgentSessionIds.push({ subagentType, sessionId: subSessionId })
+                  }
+                }
+              })
+            })
+            
+            // Fetch messages from sub-agent sessions
+            for (const { subagentType, sessionId: subSessionId } of subAgentSessionIds) {
+              try {
+                const subMessages = await sessions.fetchSessionMessages(subSessionId)
+                subMessages.forEach(subMsg => {
+                  const subContent = sessions.extractTextFromMessage(subMsg)
+                  const subRole = subMsg.info?.role
+                  
+                  if (!subContent.trim()) return
+                  
+                  // Update activity stats for sub-agent
+                  if (!agentActivityMap.has(subagentType)) {
+                    agentActivityMap.set(subagentType, {
+                      sessionCount: 0,
+                      messageCount: 0,
+                      lastActive: 0,
+                      parentAgents: new Set<string>(),
+                    })
+                  }
+                  const activity = agentActivityMap.get(subagentType)!
+                  activity.messageCount++
+                  activity.lastActive = Math.max(activity.lastActive, subMsg.info.time.created)
+                  
+                  if (!subAgentMessages.has(subagentType)) {
+                    subAgentMessages.set(subagentType, [])
+                  }
+                  
+                  subAgentMessages.get(subagentType)!.push({
+                    role: subRole === 'assistant' ? 'assistant' : 'user',
+                    content: subContent,
+                    timestamp: new Date(subMsg.info.time.created),
+                    sessionId: subSessionId,
+                    messageId: subMsg.info.id,
+                  })
+                })
+              } catch (e) {
+                console.error('[useProjectAgents] Failed to fetch sub-agent session:', subSessionId, e)
+              }
+            }
+            
+            // Merge sub-agent messages into agentMessages
+            subAgentMessages.forEach((msgs, subAgentId) => {
+              if (!agentMessages.has(subAgentId)) {
+                agentMessages.set(subAgentId, msgs)
+              } else {
+                // Merge with existing messages
+                const existing = agentMessages.get(subAgentId)!
+                agentMessages.set(subAgentId, [...existing, ...msgs])
+              }
+            })
+            
             // Store conversations - MERGE with existing conversations for same agent
             agentMessages.forEach((msgs, agentId) => {
               const key = `${project.path}::${agentId}`
@@ -199,24 +290,27 @@ export function useProjectAgents(options: UseProjectAgentsOptions) {
               )
               const sorted = uniqueMessages.sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime())
               
-              // Check if conversation actually changed
+              // Check if conversation actually changed (compare message IDs and content)
               const prevConv = previousConversations.get(key)
-              const hasChanged = !prevConv || 
-                                 prevConv.messages.length !== sorted.length ||
-                                 prevConv.messages[prevConv.messages.length - 1]?.messageId !== sorted[sorted.length - 1]?.messageId
+              const hasChanged = !prevConv || !messagesEqual(
+                prevConv.messages.map(m => ({ role: m.role, content: m.content, messageId: m.messageId })),
+                sorted.map(m => ({ role: m.role, content: m.content, messageId: m.messageId }))
+              )
               
               if (hasChanged) {
                 hasChanges = true
                 console.log('[useProjectAgents] Conversation updated for', agentId, 
                            'in', project.name, 
                            'messages:', sorted.length)
+                conversationsMap.set(key, {
+                  projectId: project.path,
+                  agentId,
+                  messages: sorted,
+                })
+              } else {
+                // Reuse previous conversation object to prevent unnecessary re-renders
+                conversationsMap.set(key, prevConv)
               }
-              
-              conversationsMap.set(key, {
-                projectId: project.path,
-                agentId,
-                messages: sorted,
-              })
             })
             
           } catch (err) {

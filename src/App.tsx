@@ -1,6 +1,5 @@
 import { Component, createSignal, createEffect, onCleanup, Show, For } from 'solid-js'
 import { ProjectCard } from './components/ProjectCard'
-import { SearchBar } from './components/SearchBar'
 import { ChatDialog } from './components/ChatDialog'
 import { ServerConfig } from './components/ServerConfig'
 import { AgentDirectory } from './components/AgentDirectory'
@@ -14,8 +13,18 @@ const App: Component = () => {
     agent: Agent
     projectId: string
     position: { x: number, y: number }
+    conversation: {  // Snapshot of conversation at open time
+      projectId: string
+      agentId: string
+      messages: Array<{
+        role: 'user' | 'assistant'
+        content: string
+        timestamp: Date
+        sessionId: string
+        messageId: string
+      }>
+    } | null
   } | null>(null)
-  const [searchQuery, setSearchQuery] = createSignal('')
   const [sidebarWidth, setSidebarWidth] = createSignal(240)
   const [isResizing, setIsResizing] = createSignal(false)
   const [serverUrl, setServerUrl] = createSignal('http://localhost:36059')
@@ -24,26 +33,14 @@ const App: Component = () => {
   
   // Use the project agents hook
   const projectAgents = useProjectAgents({
-    baseUrl: serverUrl(),
+    baseUrl: serverUrl,  // Pass the accessor function directly
     agents: initialAgents,
     pollInterval: 5000,
     enabled: true,
   })
   
-  // Filter projects by search query
-  const filteredProjects = () => {
-    const projects = projectAgents.getProjects()
-    
-    if (!searchQuery()) {
-      return projects
-    }
-    
-    const query = searchQuery().toLowerCase()
-    return projects.filter(project => 
-      project.name.toLowerCase().includes(query) ||
-      project.path.toLowerCase().includes(query)
-    )
-  }
+  // Get all projects
+  const filteredProjects = () => projectAgents.getProjects()
   
   // Get agent by ID from static list
   const getAgentById = (agentId: string): Agent | undefined => {
@@ -51,8 +48,20 @@ const App: Component = () => {
   }
   
   const handleAgentClick = (agentId: string, event: MouseEvent, projectId: string) => {
-    const agent = getAgentById(agentId)
-    if (!agent) return
+    // Find agent in static list, or create a fallback agent
+    let agent = getAgentById(agentId)
+    
+    if (!agent) {
+      // Create a fallback agent for agents not in the static list
+      agent = {
+        id: agentId,
+        name: agentId,
+        division: 'Unknown',
+        description: `Agent: ${agentId}`,
+        color: '#6B7280',
+        emoji: '🤖',
+      }
+    }
     
     const rect = (event.target as HTMLElement).getBoundingClientRect()
     const position = {
@@ -60,11 +69,15 @@ const App: Component = () => {
       y: rect.top + rect.height / 2,
     }
     
+    // Get conversation snapshot at open time (won't update until closed and reopened)
+    const conversation = projectAgents.getConversation(projectId, agentId)
+    
     // Type cast to ensure compatibility
     setSelectedAgent({
       agent: agent as any,
       projectId,
       position,
+      conversation,
     })
   }
   
@@ -106,7 +119,7 @@ const App: Component = () => {
   return (
     <div class="w-full h-full flex flex-col bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <header class="h-16 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-6 flex items-center justify-between shrink-0 shadow-sm">
+      <header class="h-16 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 flex items-center justify-between shrink-0 shadow-sm" style={{ 'padding-left': '20px', 'padding-right': '24px' }}>
         <div class="flex items-center gap-3">
           <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
             A
@@ -116,22 +129,16 @@ const App: Component = () => {
             {filteredProjects().length} projects
           </span>
         </div>
-        <div class="flex items-center gap-4">
-          <button
-            class="px-3 py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg text-gray-700 dark:text-gray-300 transition-colors flex items-center gap-2"
-            onClick={() => setShowServerConfig(true)}
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-            Server
-          </button>
-          <SearchBar 
-            value={searchQuery()} 
-            onChange={setSearchQuery}
-            placeholder="Search projects..."
-          />
-        </div>
+        <button
+          class="py-1.5 text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg text-gray-700 dark:text-gray-300 transition-colors flex items-center gap-2 border border-gray-300 dark:border-gray-600"
+          style={{ 'margin-right': '105px', 'padding-left': '10px', 'padding-right': '10px' }}
+          onClick={() => setShowServerConfig(true)}
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+          Server
+        </button>
       </header>
 
       {/* Main Content */}
@@ -150,7 +157,7 @@ const App: Component = () => {
             }}
           />
           
-          <div class="px-4 py-3 border-t border-gray-200 dark:border-gray-700">
+          <div class="py-3 border-t border-gray-200 dark:border-gray-700" style={{ 'padding-left': '5px', 'padding-right': '5px' }}>
             <div class="flex justify-between items-center text-xs text-gray-600 dark:text-gray-400">
               <span>Projects:</span>
               <span class="font-mono">{projectAgents.getProjects().length}</span>
@@ -221,28 +228,17 @@ const App: Component = () => {
       </div>
 
       {/* Chat Dialog */}
-      {selectedAgent() && (() => {
-        const selected = selectedAgent()!
-        const conversation = projectAgents.getConversation(selected.projectId, selected.agent.id)
-        
-        // Debug log
-        console.log('[App] Opening dialog for agent:', selected.agent.id, 
-                    'project:', selected.projectId,
-                    'conversation messages:', conversation?.messages?.length || 0,
-                    'conversation:', conversation)
-        
-        return (
-          <ChatDialog
-            agent={selected.agent}
-            onClose={handleCloseDialog}
-            initialPosition={selected.position}
-            serverUrl={serverUrl()}
-            mockMode={false}
-            conversation={conversation || undefined}
-            readOnly={true}  // Always in read-only mode for project conversations
-          />
-        )
-      })()}
+      {selectedAgent() && (
+        <ChatDialog
+          agent={selectedAgent()!.agent}
+          onClose={handleCloseDialog}
+          initialPosition={selectedAgent()!.position}
+          serverUrl={serverUrl()}
+          mockMode={false}
+          conversation={selectedAgent()!.conversation || undefined}
+          readOnly={true}  // Always in read-only mode for project conversations
+        />
+      )}
 
       {/* Server Config Dialog */}
       {showServerConfig() && (

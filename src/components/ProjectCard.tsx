@@ -12,6 +12,9 @@ interface AgentTreeNode {
   hasLine: boolean
 }
 
+// Persist expanded state across re-renders
+const expandedProjects = new Set<string>()
+
 export interface ProjectCardProps {
   projectPath: string
   projectName: string
@@ -23,7 +26,21 @@ export interface ProjectCardProps {
 }
 
 export const ProjectCard: Component<ProjectCardProps> = (props) => {
-  const [isExpanded, setIsExpanded] = createSignal(false)
+  const [renderTick, setRenderTick] = createSignal(0)
+  
+  const isExpanded = () => {
+    renderTick() // Subscribe to re-renders
+    return expandedProjects.has(props.projectPath)
+  }
+  
+  const toggleExpand = () => {
+    if (expandedProjects.has(props.projectPath)) {
+      expandedProjects.delete(props.projectPath)
+    } else {
+      expandedProjects.add(props.projectPath)
+    }
+    setRenderTick(t => t + 1)
+  }
   
   // Separate active and historical agents
   const activeAgents = () => props.agents.filter(a => a.status === 'active')
@@ -32,7 +49,6 @@ export const ProjectCard: Component<ProjectCardProps> = (props) => {
   // Build tree structure with parent-child relationships
   const activeAgentTree = createMemo(() => {
     const agents = activeAgents()
-    agents.forEach(a => console.log('[ProjectCard] Agent:', a.id, 'parentAgents:', a.parentAgents))
     
     const agentMap = new Map<string, AgentWithChildren>()
     
@@ -105,10 +121,6 @@ export const ProjectCard: Component<ProjectCardProps> = (props) => {
     props.onAgentClick(agentId, event)
   }
   
-  const toggleExpand = () => {
-    setIsExpanded(!isExpanded())
-  }
-  
   return (
     <div 
       class="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-xl transition-shadow duration-200"
@@ -160,51 +172,80 @@ export const ProjectCard: Component<ProjectCardProps> = (props) => {
               </span>
             </div>
             
-            <div class="flex flex-wrap gap-2">
-              <For each={flattenAgentTree(activeAgentTree())}>
-                {(node) => (
-                  <div 
-                    class="relative flex items-center"
-                    style={{ 'margin-left': node.level > 0 ? `${node.level * 24}px` : '0' }}
-                  >
-                    {/* Connecting line for child agents */}
-                    <Show when={node.hasLine}>
-                      <div 
-                        class="absolute left-0 top-1/2 w-6 h-px bg-gray-300 dark:bg-gray-600 -translate-y-1/2"
-                        style={{ 'left': '-24px' }}
-                      ></div>
-                    </Show>
+            <div style={{ 'display': 'flex', 'flex-direction': 'column', 'gap': '5px' }}>
+              <For each={activeAgentTree()}>
+                {(rootAgent) => (
+                  <div>
+                    {/* Root agent */}
                     <button
-                      class="group relative flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-700 border-2 rounded-xl hover:shadow-md transition-all duration-200 cursor-pointer min-w-[200px]"
+                      class="group relative flex items-center gap-3 bg-white dark:bg-gray-700 border-2 rounded-lg hover:shadow-md transition-all duration-200 cursor-pointer text-left"
                       style={{
-                        'border-color': node.agent.color,
-                        'background-color': `${node.agent.color}10`,
+                        'border-color': rootAgent.color,
+                        'background-color': `${rootAgent.color}10`,
+                        'padding': '5px 8px',
+                        'width': 'fit-content',
+                        'min-width': '160px',
                       }}
-                      onClick={(e) => handleAgentClick(node.agent.id, e)}
-                      title={node.agent.name}
+                      onClick={(e) => handleAgentClick(rootAgent.id, e)}
                     >
                       <div
                         class="w-8 h-8 rounded-full flex items-center justify-center text-lg transition-transform group-hover:scale-110 shrink-0"
                         style={{
-                          'background-color': node.agent.color,
-                          'border': `2px solid ${node.agent.color}`,
+                          'background-color': rootAgent.color,
+                          'border': `2px solid ${rootAgent.color}`,
                         }}
                       >
-                        {node.agent.emoji}
+                        {rootAgent.emoji}
                       </div>
                       <div class="text-left min-w-0 flex-1">
                         <p class="text-sm font-semibold text-gray-900 dark:text-white truncate">
-                          {node.agent.name}
+                          {rootAgent.name}
                         </p>
                         <p class="text-xs text-gray-500 dark:text-gray-400">
-                          {node.agent.messageCount || 0} msgs
+                          {rootAgent.messageCount || 0} msgs
                         </p>
                       </div>
-                      {/* Activity indicator - only for root level */}
-                      <Show when={node.level === 0}>
-                        <span class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-700 rounded-full animate-ping"></span>
-                      </Show>
+                      <span class="absolute -top-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-700 rounded-full animate-ping"></span>
                     </button>
+                    
+                    {/* Child agents - indented below parent */}
+                    <Show when={rootAgent.children.length > 0}>
+                      <div class="border-l-2 border-gray-200 dark:border-gray-700" style={{ 'margin-top': '5px', 'padding-left': '25px', 'display': 'flex', 'flex-direction': 'column', 'gap': '5px' }}>
+<For each={rootAgent.children}>
+                           {(childAgent) => (
+                             <button
+                               class="group relative flex items-center gap-2.5 bg-white dark:bg-gray-700 border-2 rounded-lg hover:shadow-md transition-all duration-200 cursor-pointer text-left opacity-90 hover:opacity-100"
+                               style={{
+                                 'border-color': childAgent.color,
+                                 'background-color': `${childAgent.color}08`,
+                                 'padding': '5px 8px',
+                                 'width': 'fit-content',
+                                 'min-width': '140px',
+                               }}
+                               onClick={(e) => handleAgentClick(childAgent.id, e)}
+                             >
+                              <div
+                                class="w-6 h-6 rounded-full flex items-center justify-center text-sm transition-transform group-hover:scale-110 shrink-0"
+                                style={{
+                                  'background-color': childAgent.color,
+                                  'border': `2px solid ${childAgent.color}`,
+                                }}
+                              >
+                                {childAgent.emoji}
+                              </div>
+                              <div class="text-left min-w-0 flex-1">
+                                <p class="text-xs font-medium text-gray-800 dark:text-gray-200 truncate">
+                                  {childAgent.name}
+                                </p>
+                                <p class="text-[10px] text-gray-500 dark:text-gray-400">
+                                  {childAgent.messageCount || 0} msgs
+                                </p>
+                              </div>
+                            </button>
+                          )}
+                        </For>
+                      </div>
+                    </Show>
                   </div>
                 )}
               </For>

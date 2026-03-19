@@ -2,7 +2,7 @@ import { createSignal, createEffect, onCleanup } from 'solid-js'
 import type { SessionListItem, Session, SessionMessage } from '../data/session-types'
 
 export interface UseSessionsOptions {
-  baseUrl: string
+  baseUrl: () => string  // Changed to accessor function for reactivity
   pollInterval?: number  // milliseconds, default 5000
   enabled?: boolean      // auto-fetch on mount, default true
 }
@@ -24,7 +24,7 @@ export function useSessions(options: UseSessionsOptions) {
       setLoading(true)
       setError(null)
       
-      const response = await fetch(`${options.baseUrl}/session`, {
+      const response = await fetch(`${options.baseUrl()}/session`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -51,7 +51,7 @@ export function useSessions(options: UseSessionsOptions) {
   // Fetch messages for a specific session
   const fetchSessionMessages = async (sessionId: string): Promise<SessionMessage[]> => {
     try {
-      const response = await fetch(`${options.baseUrl}/session/${sessionId}/message`, {
+      const response = await fetch(`${options.baseUrl()}/session/${sessionId}/message`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -97,6 +97,15 @@ export function useSessions(options: UseSessionsOptions) {
     const textParts = message.parts.filter(p => p.type === 'text')
     return textParts.map(p => p.text).join('')
   }
+  
+  // React to baseUrl changes
+  createEffect(() => {
+    const url = options.baseUrl()
+    console.log('[useSessions] BaseUrl changed to:', url)
+    if (enabled) {
+      fetchSessions()
+    }
+  })
   
   // Auto-fetch on mount and set up polling
   if (enabled) {

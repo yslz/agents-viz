@@ -5,16 +5,19 @@
 import { primaryAgents, commandAgents } from './primary-agents'
 
 export const divisions = [
-  "Academic",
-  "Design",
   "Engineering",
-  "Game Development",
+  "Design",
+  "Paid Media",
+  "Sales",
   "Marketing",
   "Product",
-  "Sales",
-  "Spatial Computing",
+  "Project Management",
+  "Testing",
   "Support",
-  "Testing"
+  "Spatial Computing",
+  "Specialized",
+  "Game Development",
+  "Academic"
 ]
 
 export const subAgents = [
@@ -42,7 +45,7 @@ export const subAgents = [
     "description": "Expert accessibility specialist who audits interfaces against WCAG standards, tests with assistive technologies, and ensures inclusive design. Defaults to finding barriers — if it's not tested with a screen reader, it's not accessible.",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Design",
+    "division": "Testing",
     "mode": "subagent"
   },
   {
@@ -51,7 +54,7 @@ export const subAgents = [
     "description": "Expert data analyst transforming raw data into actionable business insights. Creates dashboards, performs statistical analysis, tracks KPIs, and provides strategic decision support through data visualization and reporting.",
     "color": "#008080",
     "emoji": "📊",
-    "division": "Design",
+    "division": "Support",
     "mode": "subagent"
   },
   {
@@ -60,7 +63,7 @@ export const subAgents = [
     "description": "Expert in cultural systems, rituals, kinship, belief systems, and ethnographic method — builds culturally coherent societies that feel lived-in rather than invented",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Design",
+    "division": "Academic",
     "mode": "subagent"
   },
   {
@@ -69,7 +72,7 @@ export const subAgents = [
     "description": "Expert document creation specialist who generates professional PDF, PPTX, DOCX, and XLSX files using code-based approaches with proper formatting, charts, and data visualization.",
     "color": "#3498DB",
     "emoji": "📄",
-    "division": "Design",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -78,7 +81,7 @@ export const subAgents = [
     "description": "Screenshot-obsessed, fantasy-allergic QA specialist - Default to finding 3-5 issues, requires visual proof for everything",
     "color": "#F39C12",
     "emoji": "👤",
-    "division": "Design",
+    "division": "Testing",
     "mode": "subagent"
   },
   {
@@ -87,7 +90,7 @@ export const subAgents = [
     "description": "Consultant-grade AI specialist trained to think and communicate like a senior strategy consultant. Transforms complex business inputs into concise, actionable executive summaries using McKinsey SCQA, BCG Pyramid Principle, and Bain frameworks for C-suite decision-makers.",
     "color": "#9B59B6",
     "emoji": "👤",
-    "division": "Design",
+    "division": "Support",
     "mode": "subagent"
   },
   {
@@ -96,7 +99,7 @@ export const subAgents = [
     "description": "Expert in physical and human geography, climate systems, cartography, and spatial analysis — builds geographically coherent worlds where terrain, climate, resources, and settlement patterns make scientific sense",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Design",
+    "division": "Academic",
     "mode": "subagent"
   },
   {
@@ -114,7 +117,7 @@ export const subAgents = [
     "description": "Expert in human behavior, personality theory, motivation, and cognitive patterns — builds psychologically credible characters and interactions grounded in clinical and research frameworks",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Design",
+    "division": "Academic",
     "mode": "subagent"
   },
   {
@@ -123,7 +126,7 @@ export const subAgents = [
     "description": "Stops fantasy approvals, evidence-based certification - Default to \"NEEDS WORK\", requires overwhelming proof for production readiness",
     "color": "#E74C3C",
     "emoji": "👤",
-    "division": "Design",
+    "division": "Testing",
     "mode": "subagent"
   },
   {
@@ -132,7 +135,7 @@ export const subAgents = [
     "description": "Expert recruitment operations and talent acquisition specialist — skilled in China's major hiring platforms, talent assessment frameworks, and labor law compliance. Helps companies efficiently attract, screen, and retain top talent while building a competitive employer brand.",
     "color": "#3498DB",
     "emoji": "🎨",
-    "division": "Design",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -141,7 +144,7 @@ export const subAgents = [
     "description": "Converts specs to tasks and remembers previous projects. Focused on realistic scope, no background processes, exact spec requirements",
     "color": "#3498DB",
     "emoji": "👤",
-    "division": "Design",
+    "division": "Project Management",
     "mode": "subagent"
   },
   {
@@ -177,7 +180,7 @@ export const subAgents = [
     "description": "Knowledge-base steward in the spirit of Niklas Luhmann's Zettelkasten. Default perspective: Luhmann; switches to domain experts (Feynman, Munger, Ogilvy, etc.) by task. Enforces atomic notes, connectivity, and validation loops. Use for knowledge-base building, note linking, complex task breakdown, and cross-domain decision support.",
     "color": "#008080",
     "emoji": "👤",
-    "division": "Design",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -186,7 +189,7 @@ export const subAgents = [
     "description": "Autonomous payment processing specialist that executes vendor payments, contractor invoices, and recurring bills across any payment rail — crypto, fiat, stablecoins. Integrates with AI agent workflows via tool calls.",
     "color": "#2ECC71",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -195,7 +198,7 @@ export const subAgents = [
     "description": "Paid media creative specialist focused on ad copywriting, RSA optimization, asset group design, and creative testing frameworks across Google, Meta, Microsoft, and programmatic platforms. Bridges the gap between performance data and persuasive messaging.",
     "color": "#F39C12",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Paid Media",
     "mode": "subagent"
   },
   {
@@ -204,7 +207,7 @@ export const subAgents = [
     "description": "Designs identity, authentication, and trust verification systems for autonomous AI agents operating in multi-agent environments. Ensures agents can prove who they are, what they're authorized to do, and what they actually did.",
     "color": "#6B7280",
     "emoji": "🏛️",
-    "division": "Engineering",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -213,7 +216,7 @@ export const subAgents = [
     "description": "Autonomous pipeline manager that orchestrates the entire development workflow. You are the leader of this process.",
     "color": "#00FFFF",
     "emoji": "🎭",
-    "division": "Engineering",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -222,7 +225,7 @@ export const subAgents = [
     "description": "Expert in AI recommendation engine optimization (AEO/GEO) — audits brand visibility across ChatGPT, Claude, Gemini, and Perplexity, identifies why competitors get cited instead, and delivers content fixes that improve AI citations",
     "color": "#6B7280",
     "emoji": "🤖",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -249,7 +252,7 @@ export const subAgents = [
     "description": "Expert app store marketing specialist focused on App Store Optimization (ASO), conversion rate optimization, and app discoverability",
     "color": "#3498DB",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -258,7 +261,7 @@ export const subAgents = [
     "description": "Governance-first architect for business automations (n8n-first) who audits value, risk, and maintainability before implementation.",
     "color": "#00FFFF",
     "emoji": "🏛️",
-    "division": "Engineering",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -285,7 +288,7 @@ export const subAgents = [
     "description": "Expert Baidu search optimization specialist focused on Chinese search engine ranking, Baidu ecosystem integration, ICP compliance, Chinese keyword research, and mobile-first indexing for the China market.",
     "color": "#3498DB",
     "emoji": "🤖",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -294,7 +297,7 @@ export const subAgents = [
     "description": "Expert Bilibili marketing specialist focused on UP主 growth, danmaku culture mastery, B站 algorithm optimization, community building, and branded content strategy for China's leading video community platform.",
     "color": "#E84393",
     "emoji": "📝",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -303,7 +306,7 @@ export const subAgents = [
     "description": "Blender tooling specialist - Builds Python add-ons, asset validators, exporters, and pipeline automations that turn repetitive DCC work into reliable one-click workflows",
     "color": "#3498DB",
     "emoji": "🎨",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -312,7 +315,7 @@ export const subAgents = [
     "description": "Expert smart contract security auditor specializing in vulnerability detection, formal verification, exploit analysis, and comprehensive audit report writing for DeFi protocols and blockchain applications.",
     "color": "#E74C3C",
     "emoji": "🤖",
-    "division": "Engineering",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -321,7 +324,7 @@ export const subAgents = [
     "description": "Autonomous TikTok and Instagram carousel generation specialist. Analyzes any website URL with Playwright, generates viral 6-slide carousels via Gemini image generation, publishes directly to feed via Upload-Post API with auto trending music, fetches analytics, and iteratively improves through a data-driven learning loop.",
     "color": "#6B7280",
     "emoji": "📈",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -330,7 +333,7 @@ export const subAgents = [
     "description": "Expert China e-commerce operations specialist covering Taobao, Tmall, Pinduoduo, and JD ecosystems with deep expertise in product listing optimization, live commerce, store operations, 618/Double 11 campaigns, and cross-platform strategy.",
     "color": "#E74C3C",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -348,7 +351,7 @@ export const subAgents = [
     "description": "Expert technical compliance auditor specializing in SOC 2, ISO 27001, HIPAA, and PCI-DSS audits — from readiness assessment through evidence collection to certification.",
     "color": "#F39C12",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -357,7 +360,7 @@ export const subAgents = [
     "description": "Expert in enterprise training system design and curriculum development — proficient in training needs analysis, instructional design methodology, blended learning program design, internal trainer development, leadership programs, and training effectiveness evaluation and continuous optimization.",
     "color": "#F39C12",
     "emoji": "🤖",
-    "division": "Engineering",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -366,7 +369,7 @@ export const subAgents = [
     "description": "Full-funnel cross-border e-commerce strategist covering Amazon, Shopee, Lazada, AliExpress, Temu, and TikTok Shop operations, international logistics and overseas warehousing, compliance and taxation, multilingual listing optimization, brand globalization, and DTC independent site development.",
     "color": "#3498DB",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -393,7 +396,7 @@ export const subAgents = [
     "description": "Expert developer advocate specializing in building developer communities, creating compelling technical content, optimizing developer experience (DX), and driving platform adoption through authentic engineering engagement. Bridges product and engineering teams with external developers.",
     "color": "#9B59B6",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -438,7 +441,7 @@ export const subAgents = [
     "description": "Interactive audio specialist - Masters FMOD/Wwise integration, adaptive music systems, spatial audio, and audio performance budgeting across all game engines",
     "color": "#6366F1",
     "emoji": "🎮",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -447,7 +450,7 @@ export const subAgents = [
     "description": "Systems and mechanics architect - Masters GDD authorship, player psychology, economy balancing, and gameplay loop design across all engines and genres",
     "color": "#EAB308",
     "emoji": "🎨",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -456,7 +459,7 @@ export const subAgents = [
     "description": "Composition and signal integrity specialist - Masters GDScript 2.0, C# integration, node-based architecture, and type-safe signal design for Godot 4 projects",
     "color": "#9B59B6",
     "emoji": "🎮",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -465,7 +468,7 @@ export const subAgents = [
     "description": "Godot 4 networking specialist - Masters the MultiplayerAPI, scene replication, ENet/WebRTC transport, RPCs, and authority models for real-time multiplayer games",
     "color": "#8B5CF6",
     "emoji": "🎮",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -474,7 +477,7 @@ export const subAgents = [
     "description": "Godot 4 visual effects specialist - Masters the Godot Shading Language (GLSL-like), VisualShader editor, CanvasItem and Spatial shaders, post-processing, and performance optimization for 2D/3D effects",
     "color": "#9B59B6",
     "emoji": "✨",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -483,7 +486,7 @@ export const subAgents = [
     "description": "Presales expert for China's government digital transformation market (ToG), proficient in policy interpretation, solution design, bid document preparation, POC validation, compliance requirements (classified protection/cryptographic assessment/Xinchuang domestic IT), and stakeholder management — helping technical teams efficiently win government IT projects.",
     "color": "#6B7280",
     "emoji": "💼",
-    "division": "Engineering",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -492,7 +495,7 @@ export const subAgents = [
     "description": "Expert growth strategist specializing in rapid user acquisition through data-driven experimentation. Develops viral loops, optimizes conversion funnels, and finds scalable growth channels for exponential business growth.",
     "color": "#2ECC71",
     "emoji": "📈",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -501,7 +504,7 @@ export const subAgents = [
     "description": "Expert photography prompt engineer specializing in crafting detailed, evocative prompts for AI image generation. Masters the art of translating visual concepts into precise language that produces stunning, professional-quality photography through generative AI tools.",
     "color": "#F59E0B",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Design",
     "mode": "subagent"
   },
   {
@@ -519,7 +522,7 @@ export const subAgents = [
     "description": "Expert infrastructure specialist focused on system reliability, performance optimization, and technical operations management. Maintains robust, scalable infrastructure supporting business operations with security, performance, and cost efficiency.",
     "color": "#F39C12",
     "emoji": "🤖",
-    "division": "Engineering",
+    "division": "Support",
     "mode": "subagent"
   },
   {
@@ -528,7 +531,7 @@ export const subAgents = [
     "description": "Expert Instagram marketing specialist focused on visual storytelling, community building, and multi-format content optimization. Masters aesthetic development and drives meaningful engagement.",
     "color": "#6B7280",
     "emoji": "📸",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -537,7 +540,7 @@ export const subAgents = [
     "description": "Expert Kuaishou marketing strategist specializing in short-video content for China's lower-tier city markets, live commerce operations, community trust building, and grassroots audience growth on 快手.",
     "color": "#F39C12",
     "emoji": "🤖",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -546,7 +549,7 @@ export const subAgents = [
     "description": "Spatial storytelling and flow specialist - Masters layout theory, pacing architecture, encounter design, and environmental narrative across all game engines",
     "color": "#008080",
     "emoji": "🎨",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -555,7 +558,7 @@ export const subAgents = [
     "description": "Expert LinkedIn content strategist focused on thought leadership, personal brand building, and high-engagement professional content. Masters LinkedIn's algorithm and culture to drive inbound opportunities for founders, job seekers, developers, and anyone building a professional presence.",
     "color": "#6B7280",
     "emoji": "📝",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -564,7 +567,7 @@ export const subAgents = [
     "description": "Veteran livestream e-commerce coach specializing in host training and live room operations across Douyin, Kuaishou, Taobao Live, and Channels, covering script design, product sequencing, paid-vs-organic traffic balancing, conversion closing techniques, and real-time data-driven optimization.",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -573,7 +576,7 @@ export const subAgents = [
     "description": "Language Server Protocol specialist building unified code intelligence systems through LSP client orchestration and semantic indexing",
     "color": "#F39C12",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -582,7 +585,7 @@ export const subAgents = [
     "description": "Native Swift and Metal specialist building high-performance 3D rendering systems and spatial computing experiences for macOS and Vision Pro",
     "color": "#3B82F6",
     "emoji": "🥽",
-    "division": "Engineering",
+    "division": "Spatial Computing",
     "mode": "subagent"
   },
   {
@@ -591,7 +594,7 @@ export const subAgents = [
     "description": "Expert Model Context Protocol developer who designs, builds, and tests MCP servers that extend AI agent capabilities with custom tools, resources, and prompts.",
     "color": "#6366F1",
     "emoji": "🎨",
-    "division": "Engineering",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -609,7 +612,7 @@ export const subAgents = [
     "description": "Story systems and dialogue architect - Masters GDD-aligned narrative design, branching dialogue, lore architecture, and environmental storytelling across all game engines",
     "color": "#E74C3C",
     "emoji": "🎨",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -618,7 +621,7 @@ export const subAgents = [
     "description": "Expert performance testing and optimization specialist focused on measuring, analyzing, and improving system performance across all applications and infrastructure",
     "color": "#F39C12",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Testing",
     "mode": "subagent"
   },
   {
@@ -627,7 +630,7 @@ export const subAgents = [
     "description": "Senior paid media strategist specializing in large-scale search, shopping, and performance max campaign architecture across Google, Microsoft, and Amazon ad platforms. Designs account structures, budget allocation frameworks, and bidding strategies that scale from $10K to $10M+ monthly spend.",
     "color": "#F39C12",
     "emoji": "🤖",
-    "division": "Engineering",
+    "division": "Paid Media",
     "mode": "subagent"
   },
   {
@@ -636,7 +639,7 @@ export const subAgents = [
     "description": "Expert in building enterprise WeChat (WeCom) private domain ecosystems, with deep expertise in SCRM systems, segmented community operations, Mini Program commerce integration, user lifecycle management, and full-funnel conversion optimization.",
     "color": "#6B7280",
     "emoji": "🤖",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -645,7 +648,7 @@ export const subAgents = [
     "description": "Holistic product leader who owns the full product lifecycle — from discovery and strategy through roadmap, stakeholder alignment, go-to-market, and outcome measurement. Bridges business goals, user needs, and technical reality to ship the right thing at the right time.",
     "color": "#3498DB",
     "emoji": "📊",
-    "division": "Engineering",
+    "division": "Product",
     "mode": "subagent"
   },
   {
@@ -654,7 +657,7 @@ export const subAgents = [
     "description": "Strategic proposal architect who transforms RFPs and sales opportunities into compelling win narratives. Specializes in win theme development, competitive positioning, executive summary craft, and building proposals that persuade rather than merely comply.",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Sales",
     "mode": "subagent"
   },
   {
@@ -672,7 +675,7 @@ export const subAgents = [
     "description": "Expert Reddit marketing specialist focused on authentic community engagement, value-driven content creation, and long-term relationship building. Masters Reddit culture navigation.",
     "color": "#6B7280",
     "emoji": "🤝",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -681,7 +684,7 @@ export const subAgents = [
     "description": "Roblox UGC and avatar pipeline specialist - Masters Roblox's avatar system, UGC item creation, accessory rigging, texture standards, and the Creator Marketplace submission pipeline",
     "color": "#D946EF",
     "emoji": "🎮",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -690,7 +693,7 @@ export const subAgents = [
     "description": "Roblox platform UX and monetization specialist - Masters engagement loop design, DataStore-driven progression, Roblox monetization systems (Passes, Developer Products, UGC), and player retention for Roblox experiences",
     "color": "#84CC16",
     "emoji": "🎨",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -699,7 +702,7 @@ export const subAgents = [
     "description": "Roblox platform engineering specialist - Masters Luau, the client-server security model, RemoteEvents/RemoteFunctions, DataStore, and module architecture for scalable Roblox experiences",
     "color": "#F43F5E",
     "emoji": "🎮",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -708,7 +711,7 @@ export const subAgents = [
     "description": "Senior pre-sales engineer specializing in technical discovery, demo engineering, POC scoping, competitive battlecards, and bridging product capabilities to business outcomes. Wins the technical decision so the deal can close.",
     "color": "#6B7280",
     "emoji": "💼",
-    "division": "Engineering",
+    "division": "Sales",
     "mode": "subagent"
   },
   {
@@ -717,7 +720,7 @@ export const subAgents = [
     "description": "Solution architecture for Salesforce platform — multi-cloud design, integration patterns, governor limits, deployment strategy, and data model governance for enterprise-scale orgs",
     "color": "#6B7280",
     "emoji": "💼",
-    "division": "Engineering",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -726,7 +729,7 @@ export const subAgents = [
     "description": "Specialist in search term analysis, negative keyword architecture, and query-to-intent mapping. Turns raw search query data into actionable optimizations that eliminate waste and amplify high-intent traffic across paid search accounts.",
     "color": "#F39C12",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Paid Media",
     "mode": "subagent"
   },
   {
@@ -753,7 +756,7 @@ export const subAgents = [
     "description": "Expert search engine optimization strategist specializing in technical SEO, content optimization, link authority building, and organic search growth. Drives sustainable traffic through data-driven search strategies.",
     "color": "#6B7280",
     "emoji": "🔎",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -762,7 +765,7 @@ export const subAgents = [
     "description": "Hands-on short-video editing coach covering the full post-production pipeline, with mastery of CapCut Pro, Premiere Pro, DaVinci Resolve, and Final Cut Pro across composition and camera language, color grading, audio engineering, motion graphics and VFX, subtitle design, multi-platform export optimization, editing workflow efficiency, and AI-assisted editing.",
     "color": "#6B7280",
     "emoji": "🎬",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -798,7 +801,7 @@ export const subAgents = [
     "description": "Expert operations manager specializing in day-to-day studio efficiency, process optimization, and resource coordination. Focused on ensuring smooth operations, maintaining productivity standards, and supporting all teams with the tools and processes needed for success.",
     "color": "#2ECC71",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Project Management",
     "mode": "subagent"
   },
   {
@@ -807,7 +810,7 @@ export const subAgents = [
     "description": "Senior strategic leader specializing in high-level creative and technical project orchestration, resource allocation, and multi-project portfolio management. Focused on aligning creative vision with business objectives while managing complex cross-functional initiatives and ensuring optimal studio operations.",
     "color": "#EAB308",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Project Management",
     "mode": "subagent"
   },
   {
@@ -816,7 +819,7 @@ export const subAgents = [
     "description": "Expert customer support specialist delivering exceptional customer service, issue resolution, and user experience optimization. Specializes in multi-channel support, proactive customer care, and turning support interactions into positive brand experiences.",
     "color": "#3498DB",
     "emoji": "💬",
-    "division": "Engineering",
+    "division": "Support",
     "mode": "subagent"
   },
   {
@@ -825,7 +828,7 @@ export const subAgents = [
     "description": "Art-to-engine pipeline specialist - Masters shaders, VFX systems, LOD pipelines, performance budgeting, and cross-engine asset optimization",
     "color": "#E84393",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -843,7 +846,7 @@ export const subAgents = [
     "description": "Terminal emulation, text rendering optimization, and SwiftTerm integration for modern Swift applications",
     "color": "#2ECC71",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Spatial Computing",
     "mode": "subagent"
   },
   {
@@ -861,7 +864,7 @@ export const subAgents = [
     "description": "Expert TikTok marketing specialist focused on viral content creation, algorithm optimization, and community building. Masters TikTok's unique culture and features for brand growth.",
     "color": "#6B7280",
     "emoji": "🎵",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -870,7 +873,7 @@ export const subAgents = [
     "description": "Expert technology assessment specialist focused on evaluating, testing, and recommending tools, software, and platforms for business use and productivity optimization",
     "color": "#008080",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Testing",
     "mode": "subagent"
   },
   {
@@ -879,7 +882,7 @@ export const subAgents = [
     "description": "Expert in conversion tracking architecture, tag management, and attribution modeling across Google Tag Manager, GA4, Google Ads, Meta CAPI, LinkedIn Insight Tag, and server-side implementations. Ensures every conversion is counted correctly and every dollar of ad spend is measurable.",
     "color": "#F39C12",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Paid Media",
     "mode": "subagent"
   },
   {
@@ -888,7 +891,7 @@ export const subAgents = [
     "description": "Expert market intelligence analyst specializing in identifying emerging trends, competitive analysis, and opportunity assessment. Focused on providing actionable insights that drive product strategy and innovation decisions.",
     "color": "#9B59B6",
     "emoji": "🔍",
-    "division": "Engineering",
+    "division": "Product",
     "mode": "subagent"
   },
   {
@@ -897,7 +900,7 @@ export const subAgents = [
     "description": "Expert Twitter marketing specialist focused on real-time engagement, thought leadership building, and community-driven growth. Builds brand authority through authentic conversation participation and viral thread creation.",
     "color": "#6B7280",
     "emoji": "🐦",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -906,7 +909,7 @@ export const subAgents = [
     "description": "Data-driven modularity specialist - Masters ScriptableObjects, decoupled systems, and single-responsibility component design for scalable Unity projects",
     "color": "#3498DB",
     "emoji": "🏛️",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -915,7 +918,7 @@ export const subAgents = [
     "description": "Unity editor automation specialist - Masters custom EditorWindows, PropertyDrawers, AssetPostprocessors, ScriptedImporters, and pipeline automation that saves teams hours per week",
     "color": "#6B7280",
     "emoji": "🎮",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -924,7 +927,7 @@ export const subAgents = [
     "description": "Networked gameplay specialist - Masters Netcode for GameObjects, Unity Gaming Services (Relay/Lobby), client-server authority, lag compensation, and state synchronization",
     "color": "#3498DB",
     "emoji": "🎮",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -933,7 +936,7 @@ export const subAgents = [
     "description": "Visual effects and material specialist - Masters Unity Shader Graph, HLSL, URP/HDRP rendering pipelines, and custom pass authoring for real-time visual effects",
     "color": "#00FFFF",
     "emoji": "✨",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -942,7 +945,7 @@ export const subAgents = [
     "description": "Unreal Engine networking specialist - Masters Actor replication, GameMode/GameState architecture, server-authoritative gameplay, network prediction, and dedicated server setup for UE5",
     "color": "#E74C3C",
     "emoji": "🏛️",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -951,7 +954,7 @@ export const subAgents = [
     "description": "Performance and hybrid architecture specialist - Masters C++/Blueprint continuum, Nanite geometry, Lumen GI, and Gameplay Ability System for AAA-grade Unreal Engine projects",
     "color": "#F39C12",
     "emoji": "🎮",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -960,7 +963,7 @@ export const subAgents = [
     "description": "Unreal Engine visual pipeline specialist - Masters the Material Editor, Niagara VFX, Procedural Content Generation, and the art-to-engine pipeline for UE5 projects",
     "color": "#F39C12",
     "emoji": "🎮",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -969,7 +972,7 @@ export const subAgents = [
     "description": "Open-world and environment specialist - Masters UE5 World Partition, Landscape, procedural foliage, HLOD, and large-scale level streaming for seamless open-world experiences",
     "color": "#2ECC71",
     "emoji": "🎨",
-    "division": "Engineering",
+    "division": "Game Development",
     "mode": "subagent"
   },
   {
@@ -978,7 +981,7 @@ export const subAgents = [
     "description": "Technical architecture and UX specialist who provides developers with solid foundations, CSS systems, and clear implementation guidance",
     "color": "#9B59B6",
     "emoji": "🏛️",
-    "division": "Engineering",
+    "division": "Design",
     "mode": "subagent"
   },
   {
@@ -987,7 +990,7 @@ export const subAgents = [
     "description": "Native visionOS spatial computing, SwiftUI volumetric interfaces, and Liquid Glass design implementation",
     "color": "#6366F1",
     "emoji": "🥽",
-    "division": "Engineering",
+    "division": "Spatial Computing",
     "mode": "subagent"
   },
   {
@@ -1005,7 +1008,7 @@ export const subAgents = [
     "description": "Expert WeChat Official Account (OA) strategist specializing in content marketing, subscriber engagement, and conversion optimization. Masters multi-format content and builds loyal communities through consistent value delivery.",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -1014,7 +1017,7 @@ export const subAgents = [
     "description": "Full-spectrum operations expert for Sina Weibo, with deep expertise in trending topic mechanics, Super Topic community management, public sentiment monitoring, fan economy strategies, and Weibo advertising, helping brands achieve viral reach and sustained growth on China's leading public discourse platform.",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -1023,7 +1026,7 @@ export const subAgents = [
     "description": "Workflow design specialist who maps complete workflow trees for every system, user journey, and agent interaction — covering happy paths, all branch conditions, failure modes, recovery paths, handoff contracts, and observable states to produce build-ready specs that agents can implement against and QA can test against.",
     "color": "#F39C12",
     "emoji": "🏛️",
-    "division": "Engineering",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -1032,7 +1035,7 @@ export const subAgents = [
     "description": "Expert Xiaohongshu marketing specialist focused on lifestyle content, trend-driven strategies, and authentic community engagement. Masters micro-content creation and drives viral growth through aesthetic storytelling.",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -1041,7 +1044,7 @@ export const subAgents = [
     "description": "Expert WebXR and immersive technology developer with specialization in browser-based AR/VR/XR applications",
     "color": "#06B6D4",
     "emoji": "👓",
-    "division": "Engineering",
+    "division": "Spatial Computing",
     "mode": "subagent"
   },
   {
@@ -1050,7 +1053,7 @@ export const subAgents = [
     "description": "Spatial interaction designer and interface strategist for immersive AR/VR/XR environments",
     "color": "#10B981",
     "emoji": "🏛️",
-    "division": "Engineering",
+    "division": "Spatial Computing",
     "mode": "subagent"
   },
   {
@@ -1059,7 +1062,7 @@ export const subAgents = [
     "description": "Expert Zhihu marketing specialist focused on thought leadership, community credibility, and knowledge-driven engagement. Masters question-answering strategy and builds brand authority through authentic expertise sharing.",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Engineering",
+    "division": "Marketing",
     "mode": "subagent"
   },
   {
@@ -1068,7 +1071,7 @@ export const subAgents = [
     "description": "Expert in narrative theory, story structure, character arcs, and literary analysis — grounds advice in established frameworks from Propp to Campbell to modern narratology",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Game Development",
+    "division": "Academic",
     "mode": "subagent"
   },
   {
@@ -1104,7 +1107,7 @@ export const subAgents = [
     "description": "Expert financial analyst and controller specializing in financial planning, budget management, and business performance analysis. Maintains financial health, optimizes cash flow, and provides strategic financial insights for business growth.",
     "color": "#2ECC71",
     "emoji": "💰",
-    "division": "Marketing",
+    "division": "Support",
     "mode": "subagent"
   },
   {
@@ -1122,7 +1125,7 @@ export const subAgents = [
     "description": "Expert legal and compliance specialist ensuring business operations, data handling, and content creation comply with relevant laws, regulations, and industry standards across multiple jurisdictions.",
     "color": "#E74C3C",
     "emoji": "⚖️",
-    "division": "Marketing",
+    "division": "Support",
     "mode": "subagent"
   },
   {
@@ -1131,7 +1134,7 @@ export const subAgents = [
     "description": "Cross-platform paid social advertising specialist covering Meta (Facebook/Instagram), LinkedIn, TikTok, Pinterest, X, and Snapchat. Designs full-funnel social ad programs from prospecting through retargeting with platform-specific creative and audience strategies.",
     "color": "#F39C12",
     "emoji": "🤖",
-    "division": "Marketing",
+    "division": "Paid Media",
     "mode": "subagent"
   },
   {
@@ -1149,7 +1152,7 @@ export const subAgents = [
     "description": "Display advertising and programmatic media buying specialist covering managed placements, Google Display Network, DV360, trade desk platforms, partner media (newsletters, sponsored content), and ABM display strategies via platforms like Demandbase and 6Sense.",
     "color": "#F39C12",
     "emoji": "👤",
-    "division": "Marketing",
+    "division": "Paid Media",
     "mode": "subagent"
   },
   {
@@ -1167,7 +1170,7 @@ export const subAgents = [
     "description": "Expert visual communication specialist focused on creating compelling visual narratives, multimedia content, and brand storytelling through design. Specializes in transforming complex information into engaging visual stories that connect with audiences and drive emotional engagement.",
     "color": "#9B59B6",
     "emoji": "👤",
-    "division": "Marketing",
+    "division": "Design",
     "mode": "subagent"
   },
   {
@@ -1185,7 +1188,7 @@ export const subAgents = [
     "description": "Expert project manager specializing in experiment design, execution tracking, and data-driven decision making. Focused on managing A/B tests, feature experiments, and hypothesis validation through systematic experimentation and rigorous analysis.",
     "color": "#9B59B6",
     "emoji": "👤",
-    "division": "Product",
+    "division": "Project Management",
     "mode": "subagent"
   },
   {
@@ -1203,7 +1206,7 @@ export const subAgents = [
     "description": "Expert project manager specializing in cross-functional project coordination, timeline management, and stakeholder alignment. Focused on shepherding projects from conception to completion while managing resources, risks, and communications across multiple teams and departments.",
     "color": "#3498DB",
     "emoji": "👤",
-    "division": "Product",
+    "division": "Project Management",
     "mode": "subagent"
   },
   {
@@ -1221,7 +1224,7 @@ export const subAgents = [
     "description": "Expert process improvement specialist focused on analyzing, optimizing, and automating workflows across all business functions for maximum productivity and efficiency",
     "color": "#2ECC71",
     "emoji": "👤",
-    "division": "Product",
+    "division": "Testing",
     "mode": "subagent"
   },
   {
@@ -1239,7 +1242,7 @@ export const subAgents = [
     "description": "Expert brand strategist and guardian specializing in brand identity development, consistency maintenance, and strategic brand positioning",
     "color": "#3498DB",
     "emoji": "🛡️",
-    "division": "Sales",
+    "division": "Design",
     "mode": "subagent"
   },
   {
@@ -1248,7 +1251,7 @@ export const subAgents = [
     "description": "CQ specialist that detects invisible exclusion, researches global context, and ensures software resonates authentically across intersectional identities.",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Sales",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -1257,7 +1260,7 @@ export const subAgents = [
     "description": "AI agent that consolidates extracted sales data into live reporting dashboards with territory, rep, and pipeline summaries",
     "color": "#6B7280",
     "emoji": "📈",
-    "division": "Sales",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -1284,7 +1287,7 @@ export const subAgents = [
     "description": "Korean business culture for foreign professionals — 품의 decision process, nunchi reading, KakaoTalk business etiquette, hierarchy navigation, and relationship-first deal mechanics",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Sales",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -1302,7 +1305,7 @@ export const subAgents = [
     "description": "Comprehensive paid media auditor who systematically evaluates Google Ads, Microsoft Ads, and Meta accounts across 200+ checkpoints spanning account structure, tracking, bidding, creative, audiences, and competitive positioning. Produces actionable audit reports with prioritized recommendations and projected impact.",
     "color": "#F39C12",
     "emoji": "🤖",
-    "division": "Sales",
+    "division": "Paid Media",
     "mode": "subagent"
   },
   {
@@ -1320,7 +1323,7 @@ export const subAgents = [
     "description": "AI agent that automates distribution of consolidated sales reports to representatives based on territorial parameters",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Sales",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -1338,7 +1341,7 @@ export const subAgents = [
     "description": "AI agent specialized in monitoring Excel files and extracting key sales metrics (MTD, YTD, Year End) for internal live reporting",
     "color": "#6B7280",
     "emoji": "💼",
-    "division": "Sales",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -1347,7 +1350,7 @@ export const subAgents = [
     "description": "Full-spectrum study abroad planning expert covering the US, UK, Canada, Australia, Europe, Hong Kong, and Singapore — proficient in undergraduate, master's, and PhD application strategy, school selection, essay coaching, profile enhancement, standardized test planning, visa preparation, and overseas life adaptation, helping Chinese students craft personalized end-to-end study abroad plans.",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Sales",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -1356,7 +1359,7 @@ export const subAgents = [
     "description": "Expert supply chain management and procurement strategy specialist — skilled in supplier development, strategic sourcing, quality control, and supply chain digitalization. Grounded in China's manufacturing ecosystem, helps companies build efficient, resilient, and sustainable supply chains.",
     "color": "#3498DB",
     "emoji": "🤖",
-    "division": "Sales",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -1374,7 +1377,7 @@ export const subAgents = [
     "description": "Navigate the French ESN/SI freelance ecosystem — margin models, platform mechanics (Malt, collective.work), portage salarial, rate positioning, and payment cycle realities",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Support",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -1383,7 +1386,7 @@ export const subAgents = [
     "description": "Operates a shared identity graph that multiple AI agents resolve against. Ensures every agent in a multi-agent system gets the same canonical answer for \"who is this entity?\" - deterministically, even under concurrent writes.",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Support",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -1392,7 +1395,7 @@ export const subAgents = [
     "description": "Independent model QA expert who audits ML and statistical models end-to-end - from documentation review and data reconstruction to replication, calibration testing, interpretability analysis, performance monitoring, and audit-grade reporting.",
     "color": "#6B7280",
     "emoji": "👤",
-    "division": "Support",
+    "division": "Specialized",
     "mode": "subagent"
   },
   {
@@ -1410,7 +1413,7 @@ export const subAgents = [
     "description": "Expert in Git workflows, branching strategies, and version control best practices including conventional commits, rebasing, worktrees, and CI-friendly branch management.",
     "color": "#F39C12",
     "emoji": "👤",
-    "division": "Testing",
+    "division": "Engineering",
     "mode": "subagent"
   },
   {
@@ -1419,7 +1422,7 @@ export const subAgents = [
     "description": "Expert delivery operations specialist who enforces Jira-linked Git workflows, traceable commits, structured pull requests, and release-safe branch strategy across software teams.",
     "color": "#F39C12",
     "emoji": "👤",
-    "division": "Testing",
+    "division": "Project Management",
     "mode": "subagent"
   },
   {
