@@ -27,7 +27,14 @@ const App: Component = () => {
   } | null>(null)
   const [sidebarWidth, setSidebarWidth] = createSignal(240)
   const [isResizing, setIsResizing] = createSignal(false)
-  const [serverUrl, setServerUrl] = createSignal('http://localhost:36059')
+  const getStoredServerUrl = () => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('opencode-server-url')
+      if (stored) return stored
+    }
+    return ''
+  }
+  const [serverUrl, setServerUrl] = createSignal(getStoredServerUrl())
   const [showServerConfig, setShowServerConfig] = createSignal(false)
   const [selectedDivision, setSelectedDivision] = createSignal<string | null>(null)
   
@@ -244,7 +251,7 @@ const App: Component = () => {
       {showServerConfig() && (
         <ServerConfig
           serverUrl={serverUrl()}
-          onServerUrlChange={setServerUrl}
+          onServerUrlChange={(url) => { localStorage.setItem('opencode-server-url', url); setServerUrl(url) }}
           onClose={() => setShowServerConfig(false)}
         />
       )}
