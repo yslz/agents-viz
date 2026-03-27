@@ -337,10 +337,37 @@ export const subAgents = [
     "mode": "subagent"
   },
   {
+    "id": "china-market-localization-strategist",
+    "name": "China Market Localization Strategist",
+    "description": "Full-stack China market localization expert who transforms real-time trend signals into executable go-to-market strategies across Douyin, Xiaohongshu, WeChat, Bilibili, and beyond",
+    "color": "#6B7280",
+    "emoji": "👤",
+    "division": "Marketing",
+    "mode": "subagent"
+  },
+  {
+    "id": "civil-engineer",
+    "name": "Civil Engineer",
+    "description": "Expert civil and structural engineer with global standards coverage — Eurocode, DIN, ACI, AISC, ASCE, AS/NZS, CSA, GB, IS, AIJ, and more. Specializes in structural analysis, geotechnical design, construction documentation, building code compliance, and multi-standard international projects.",
+    "color": "#EAB308",
+    "emoji": "👤",
+    "division": "Specialized",
+    "mode": "subagent"
+  },
+  {
     "id": "code-reviewer",
     "name": "Code Reviewer",
     "description": "Expert code reviewer who provides constructive, actionable feedback focused on correctness, maintainability, security, and performance — not style preferences.",
     "color": "#9B59B6",
+    "emoji": "👤",
+    "division": "Engineering",
+    "mode": "subagent"
+  },
+  {
+    "id": "cms-developer",
+    "name": "CMS Developer",
+    "description": "Drupal and WordPress specialist for theme development, custom plugins/modules, content architecture, and code-first CMS implementation",
+    "color": "#3498DB",
     "emoji": "👤",
     "division": "Engineering",
     "mode": "subagent"
@@ -414,6 +441,15 @@ export const subAgents = [
     "description": "Specialist in bare-metal and RTOS firmware - ESP32/ESP-IDF, PlatformIO, Arduino, ARM Cortex-M, STM32 HAL/LL, Nordic nRF5/nRF Connect SDK, FreeRTOS, Zephyr",
     "color": "#F39C12",
     "emoji": "🔌",
+    "division": "Engineering",
+    "mode": "subagent"
+  },
+  {
+    "id": "email-intelligence-engineer",
+    "name": "Email Intelligence Engineer",
+    "description": "Expert in extracting structured, reasoning-ready data from raw email threads for AI agents and automation systems",
+    "color": "#6366F1",
+    "emoji": "👤",
     "division": "Engineering",
     "mode": "subagent"
   },
@@ -994,6 +1030,15 @@ export const subAgents = [
     "mode": "subagent"
   },
   {
+    "id": "video-optimization-specialist",
+    "name": "Video Optimization Specialist",
+    "description": "Video marketing strategist specializing in YouTube algorithm optimization, audience retention, chaptering, thumbnail concepts, and cross-platform video syndication.",
+    "color": "#E74C3C",
+    "emoji": "👤",
+    "division": "Marketing",
+    "mode": "subagent"
+  },
+  {
     "id": "wechat-mini-program-developer",
     "name": "WeChat Mini Program Developer",
     "description": "Expert WeChat Mini Program developer specializing in 小程序 development with WXML/WXSS/WXS, WeChat API integration, payment systems, subscription messaging, and the full WeChat ecosystem.",
@@ -1198,6 +1243,15 @@ export const subAgents = [
     "color": "#3498DB",
     "emoji": "👤",
     "division": "Product",
+    "mode": "subagent"
+  },
+  {
+    "id": "filament-optimization-specialist",
+    "name": "Filament Optimization Specialist",
+    "description": "Expert in restructuring and optimizing Filament PHP admin interfaces for maximum usability and efficiency. Focuses on impactful structural changes — not just cosmetic tweaks.",
+    "color": "#6366F1",
+    "emoji": "👤",
+    "division": "Engineering",
     "mode": "subagent"
   },
   {
